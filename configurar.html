@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
-	<title>Mobilize</title> 
+	<title>Abatarium</title> 
     <link rel="apple-touch-icon" href="assets/images/apple-touch-icon.png"/>
     
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -36,41 +36,53 @@
     
     <!-- main content -->
     <div data-role="content">
-    
-    
-    	
-	<p>
-		<strong>Hey</strong>! Antes de comenzar debe configurar sus palabras claves,
-		las cuales le ayudarán a filtrar las noticias más relevantes para usted
-	</p>
-    
-
-	<!-- list begins -->
-	<div class="padd">
-
-		<ul class="ui-listview" data-split-icon="plus" data-filter-theme="b" data-filter-placeholder="Search..." data-filter="true" data-role="listview" data-inset="true"data-filter-placeholder="Buscar palabra..." style="margin-bottom:0px">
-			<li>
-				<a href="#">Broken Bells</a>
-				<a href="#purchase" data-rel="popup" data-position-to="window" data-transition="pop">Purchase album</a>
-			</li>
-			<li>
-				<a href="#">Warning</a>
-				<a href="#purchase" data-rel="popup" data-position-to="window" data-transition="pop">Purchase album</a>
-			</li>
-			<li>
-				<a href="#">Wolfgang Amadeus Phoenix</a>
-				<a href="#purchase" data-rel="popup" data-position-to="window" data-transition="pop">Purchase album</a>
-			</li>
-		</ul>
-        
-        <div class="shadow2box"><img src="assets/images/shadow2.png" class="shadow2" alt="shadow"></div>
-
-	</div>
-	<!-- list ends -->
+		<form name="form4" id="form4" action="personalizadas.html" method="post">
+			<div data-role="fieldcontain">
+				<label for="show_nnews">Cantidad de noticias a mostrar:</label>
+				<input type="range" name="show_nnews" id="show_nnews" min="1" max="20" value="10" />
+			</div>
+			
+			<div data-role="fieldcontain">
+				<label>Palabras Claves:</label>
+				<span>Permiten encontrar noticias exclusivamente de tu interes, use los botones (+) y (-) para agregar o quitar palabras claves</span>
+				<ul class="ui-listview" data-split-icon="minus" data-role="listview" data-inset="true" data-filter-placeholder="Buscar palabra..." style="margin-bottom:0px" data-divider-theme="d">
+					<li data-role="list-divider">Tus Palabras Claves</li>
+					<li>
+						<a href="#">Baloncesto</a>
+						<a href="#purchase" data-rel="popup" data-position-to="window" data-transition="pop">Purchase album</a>
+					</li>
+					
+				</ul>
+				
+				<div class="shadow2box"><img src="assets/images/shadow2.png" class="shadow2" alt="shadow"></div>
+				
+				<div class="padd">
+					<ul class="ui-listview" data-split-icon="plus" data-filter-theme="b" data-filter-placeholder="Buscar palabra..." data-filter="true" data-role="listview" data-inset="true" data-filter-placeholder="Buscar palabra..." style="margin-bottom:0px">
+						<li data-role="list-divider">Palabras Claves Disponibles</li>
+						<li>
+							<a href="#">Sucesos</a>
+							<a href="#purchase" data-rel="popup" data-position-to="window" data-transition="pop">Purchase album</a>
+						</li>
+						<li>
+							<a href="#">Negocios</a>
+							<a href="#purchase" data-rel="popup" data-position-to="window" data-transition="pop">Purchase album</a>
+						</li>
+						<li>
+							<a href="#">Entretenimiento</a>
+							<a href="#purchase" data-rel="popup" data-position-to="window" data-transition="pop">Purchase album</a>
+						</li>
+					</ul>
+					
+					<div class="shadow2box"><img src="assets/images/shadow2.png" class="shadow2" alt="shadow"></div>
+			
+				</div>
+				
+				<a href="nueva_palabra.html" data-role="button" data-icon="plus" data-rel="dialog" data-transition="pop">Nueva palabra clave</a>
+			</div>
+			<button type="submit" id="sbm">Guardar Cambios</button>
+		</form>
 	
-	<a href="nueva_palabra.html" data-role="button" data-icon="plus" data-rel="dialog" data-transition="pop">Agregar palabra</a>
-	<p>http://jsfiddle.net/NXrRp/10/ < para agregar y quitar palabras dinamicamente</p>
-	<a href="personalizadas.html" data-role="button">Guardar Cambios</a>
+	<!--<p>http://jsfiddle.net/NXrRp/10/ < para agregar y quitar palabras dinamicamente</p>-->
      
   </div><!-- /content -->
 	
@@ -78,10 +90,10 @@
 	<div data-role="footer">
 		<div data-role="navbar" class="custom-icons" data-grid="c">
 			<ul>
-				<li><a href="http://bit.ly/yx2mXZ" id="sign" data-icon="custom" data-theme="b">Directions</a></li>
-				<li><a href="tel:18005551234" id="cell" data-icon="custom" data-theme="b">Call Us</a></li>
-				<li><a href="portfolio.html" id="photos2" data-icon="custom" data-theme="b" data-ajax="false">Portfolio</a></li>
-				<li><a href="twitter.html" id="twitter" data-icon="custom" data-theme="b" data-ajax="false">Tweets</a></li>
+				<li><a href="perfil.html" id="users" data-icon="custom" data-theme="b" data-ajax="false">Perfil</a></li>
+				<li><a href="ayuda.html" id="sign" data-icon="custom" data-theme="b">Ayuda</a></li>
+				<li><a href="configurar.html" id="pencil" data-icon="custom" data-theme="b" data-ajax="false">Configurar</a></li>
+				<li><a href="acerca.html" id="presentation" data-icon="custom" data-theme="b">Acerca de</a></li>
 			</ul>
 		</div>
        

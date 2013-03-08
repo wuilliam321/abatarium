@@ -2151,7 +2151,25 @@ html[xmlns] .slides {display: block;}
  	/* font-family: 'Droid Sans', sans-serif; font-size:16px */
 }
 
+/*  CUSTOM STYLES
+**********************************/
+.picture-container {
+	text-align:center;
+	width:100%;
+	max-width:400px;
+	margin:auto;
+}
+.perfil-picture {
+	background-color:#eee;
+}
+.perfil-picture img {
+	width:100%;
+}
+/* Fix */
+.ui-li-link-alt {
+	top: -1px;
+}
 
-
-
-
+form label {
+	font-weight:bold !important;
+}
