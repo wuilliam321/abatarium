@@ -1,0 +1,222 @@
+<!DOCTYPE html> 
+<html> 
+<head>
+	<meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
+	<title>Mobilize</title> 
+    <link rel="apple-touch-icon" href="assets/images/apple-touch-icon.png"/>
+    
+    <meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+    <!-- scripts -->
+	<script src="http://code.jquery.com/jquery-1.6.4.min.js"></script>
+	<script src="http://code.jquery.com/mobile/1.1.0/jquery.mobile-1.1.0.min.js"></script>
+    
+    <!-- css -->
+   	<link rel="stylesheet" href="assets/css/style1.css">
+
+</head> 
+<body>
+
+<div data-role="page">
+    
+    <!-- header -->
+	<div data-role="header" class="page-header" data-add-back-btn="true">
+    	<a href="index.html" data-icon="arrow-l" data-iconpos="notext" data-direction="reverse" data-rel="back" rel="external">Back</a>
+    		<div class="logo"></div>
+    	<a href="index.html" data-icon="home" data-iconpos="notext" data-direction="reverse"  rel="external" class="ui-btn-right">Home</a>
+	</div>
+    <!--/header -->
+    
+	<!-- banner & title -->
+	<div class="bannerContainer">
+		<img src="assets/images/headers/1.jpg" class="banner">	
+    </div>
+  	<h2 class="pageTitle"><span>Events List Inset</span></h2>
+	<div class="shadow1box"><img src="assets/images/shadow1.png" class="shadow1" alt="shadow"></div>
+	<!-- /banner & title -->
+    
+    <!-- main content -->
+    <div data-role="content">
+    
+    
+    	
+	<p>Now your clients can easily search for a future event, or quickly find out the details of an event the're already at!</p>
+    
+    <!-- list begins -->
+    <div class="padd">
+	<div class="events-list">
+        
+
+        <ul class="ui-listview" data-filter-theme="b" data-filter-placeholder="Search events..." data-filter="true" data-role="listview" data-inset="true">
+
+		<li data-role="list-divider">
+			Monday, August 4, 2012
+				<span class="ui-li-count">2</span>
+		</li>
+        
+        <li class="ui-btn-icon-right ui-li-has-arrow">
+			<div class="ui-btn-inner ui-li" aria-hidden="true">
+				<div class="ui-btn-text">
+					<a class="ui-link-inherit" href="demo-page.html">
+						<p class="ui-li-aside ui-li-desc" >
+							<strong>2:00</strong>
+							PM						</p>
+						<h3 class="ui-li-heading">jQuery Meetup</h3>
+							<p class="ui-li-desc">
+								<strong>First of many events taking place in Boston, MA</strong>							</p>
+								<p class="ui-li-desc">Mark your calendar, this is going to be great!</p>
+					</a>				</div>
+            <span class="ui-icon ui-icon-arrow-r ui-icon-shadow"></span>			</div>
+		</li>
+
+        <li class="ui-btn-icon-right ui-li-has-arrow">
+			<div class="ui-btn-inner ui-li" aria-hidden="true" >
+				<div class="ui-btn-text">
+					<a class="ui-link-inherit" href="demo-page.html">
+						<p class="ui-li-aside ui-li-desc" >
+							<strong>10:30</strong>
+							AM						</p>
+						<h3 class="ui-li-heading">WordPress Brunch</h3>
+							<p class="ui-li-desc">
+								<strong>Come meet local WordPress enthusiasts.</strong>							</p>
+								<p class="ui-li-desc">Currently looking for guest speakers.</p>
+					</a>				</div>
+            <span class="ui-icon ui-icon-arrow-r ui-icon-shadow"></span>			</div>
+		</li>
+
+
+		<li data-role="list-divider">
+			Wednesday, October 16, 2012
+				<span class="ui-li-count">4</span>
+		</li>
+        
+        <li class="ui-btn-icon-right ui-li-has-arrow">
+			<div class="ui-btn-inner ui-li" aria-hidden="true">
+				<div class="ui-btn-text">
+					<a class="ui-link-inherit" href="demo-page.html">
+						<p class="ui-li-aside ui-li-desc" >
+							<strong>5:30</strong>
+							PM						</p>
+						<h3 class="ui-li-heading">Dinner at Rex</h3>
+							<p class="ui-li-desc">
+								<strong>Burgers for everyone.</strong>							</p>
+								<p class="ui-li-desc">Come join local burger enthusiasts.</p>
+					</a>				</div>
+            <span class="ui-icon ui-icon-arrow-r ui-icon-shadow"></span>			</div>
+		</li>
+        
+        <li class="ui-btn-icon-right ui-li-has-arrow">
+			<div class="ui-btn-inner ui-li" aria-hidden="true">
+				<div class="ui-btn-text"  >
+					<a class="ui-link-inherit" href="demo-page.html">
+						<p class="ui-li-aside ui-li-desc" >
+							<strong>2:00</strong>
+							PM						</p>
+						<h3 class="ui-li-heading">Interior Decorating 101</h3>
+							<p class="ui-li-desc">
+								<strong>A new event with some top talent.</strong>							</p>
+								<p class="ui-li-desc">Curtains, rugs, and pillows galore.</p>
+					</a>				</div>
+            <span class="ui-icon ui-icon-arrow-r ui-icon-shadow"></span>			</div>
+		</li> 
+        
+        <li class="ui-btn-icon-right ui-li-has-arrow">
+			<div class="ui-btn-inner ui-li" aria-hidden="true">
+				<div class="ui-btn-text">
+					<a class="ui-link-inherit" href="demo-page.html">
+						<p class="ui-li-aside ui-li-desc">
+							<strong>11:30</strong>
+							AM						</p>
+						<h3 class="ui-li-heading">Photoshop Convention</h3>
+							<p class="ui-li-desc">
+								<strong>Shop &amp; Chop</strong>							</p>
+								<p class="ui-li-desc">Learn from top Photoshop experts.</p>
+					</a>				</div>
+            <span class="ui-icon ui-icon-arrow-r ui-icon-shadow"></span>			</div>
+		</li>
+        
+        <li class="ui-btn-icon-right ui-li-has-arrow">
+			<div class="ui-btn-inner ui-li" aria-hidden="true">
+				<div class="ui-btn-text">
+					<a class="ui-link-inherit" href="demo-page.html">
+						<p class="ui-li-aside ui-li-desc" >
+							<strong>9:00</strong>
+							AM						</p>
+						<h3 class="ui-li-heading">Web Design for Smarties</h3>
+							<p class="ui-li-desc">
+								<strong>Do you have what it takes?</strong>							</p>
+								<p class="ui-li-desc">Come show off your design chops.</p>
+					</a>				</div>
+            <span class="ui-icon ui-icon-arrow-r ui-icon-shadow"></span>			</div>
+		</li>
+        
+        <li data-role="list-divider">
+			Sunday, December 20, 2012
+				<span class="ui-li-count">2</span>
+		</li>
+
+		<li class="ui-btn-icon-right ui-li-has-arrow">
+			<div class="ui-btn-inner ui-li" aria-hidden="true">
+				<div class="ui-btn-text">
+					<a class="ui-link-inherit" href="demo-page.html">
+						<p class="ui-li-aside ui-li-desc">
+							<strong>11:30</strong>
+							AM						</p>
+						<h3 class="ui-li-heading">CSS3 Tricks</h3>
+							<p class="ui-li-desc">
+								<strong>Tables are gone, gradients are here.</strong>							</p>
+								<p class="ui-li-desc">Great talks planned, be here!</p>
+					</a>				</div>
+            <span class="ui-icon ui-icon-arrow-r ui-icon-shadow"></span>			</div>
+		</li>
+        
+        <li class="ui-btn-icon-right ui-li-has-arrow">
+			<div class="ui-btn-inner ui-li" aria-hidden="true">
+				<div class="ui-btn-text"  >
+					<a class="ui-link-inherit" href="demo-page.html">
+						<p class="ui-li-aside ui-li-desc" >
+							<strong>7:00</strong>
+							AM						</p>
+						<h3 class="ui-li-heading">Snow Day</h3>
+							<p class="ui-li-desc">
+								<strong>Group trip to the mountains.</strong>							</p>
+								<p class="ui-li-desc">Save the date..we're going snowboarding!</p>
+					</a>				</div>
+            <span class="ui-icon ui-icon-arrow-r ui-icon-shadow"></span>			</div>
+		</li>
+
+	</ul>
+
+
+	</div>
+	</div>
+    <!-- list ends -->
+
+
+
+
+     
+  </div><!-- /content -->
+	
+	<!-- footer -->
+	<div data-role="footer">
+		<div data-role="navbar" class="custom-icons" data-grid="c">
+			<ul>
+				<li><a href="http://bit.ly/yx2mXZ" id="map-marker" data-icon="custom" data-theme="b">Directions</a></li>
+				<li><a href="tel:18005551234" id="cell" data-icon="custom" data-theme="b">Call Us</a></li>
+				<li><a href="portfolio.html" id="photos" data-icon="custom" data-theme="b" data-ajax="false">Portfolio</a></li>
+				<li><a href="twitter.html" id="twitter" data-icon="custom" data-theme="b" data-ajax="false">Tweets</a></li>
+			</ul>
+		</div>
+       
+	</div>
+	<!-- /footer -->
+
+	
+</div><!-- /page -->
+
+ 
+</body>
+</html>

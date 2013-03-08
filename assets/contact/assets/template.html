@@ -1,0 +1,44 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Contact Form</title>
+<style>
+body	{
+	font-family: Verdana, Geneva, sans-serif;
+	font-size: 11px;
+	color: #444;
+}
+p	{
+	margin: 0;
+	line-height: 20px;
+}
+h1	{
+	font-size: 20px;
+	color: #06F;
+	padding-bottom: 8px;
+	border-bottom: 1px solid #eee;
+}
+.system	{
+	font-family: "Lucida Console", Monaco, monospace;
+	padding-top: 8px;
+	border-top: 1px solid #eee;
+	font-size: 90%;
+}
+</style>
+</head>
+
+<body><h1>{header}</h1>
+<p>{fields}</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<div class="system">
+	<p>More info:</p>
+	<p>Sent from {page}</p>
+	<p>Client IP {ip}</p>
+	<p>Date {date}</p>
+	<p>Time {time}</p>
+	<p>Other: {user_agent}</p>
+</div>
+</body>
+</html>
