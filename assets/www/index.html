@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport"
+	content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
+<title>Abatarium</title>
+<link rel="apple-touch-icon" href="images/apple-touch-icon.png" />
+
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+<!-- scripts -->
+<script type="text/javascript" src="cordova-2.5.0.js"></script>
+<script type="text/javascript" src="js/jquery-1.6.4.min.js"></script>
+<script type="text/javascript" src="js/jquery.mobile-1.1.0.min.js"></script>
+<script type="text/javascript" src="js/jquery.validate.min.js"></script>
+<script type="text/javascript" src="js/index.js"></script>
+<script type="text/javascript" src="js/jquery.flexslider-min.js"></script>
+
+<script type="text/javascript">
+	app.initialize();
+</script>
+
+<!-- css -->
+<link rel="stylesheet" href="css/style1.css">
+
+</head>
+<body>
+	<!-- Page::Main -->
+	<div data-role="page" id="main">
+
+		<div data-role="header" class="page-header">
+			<div class="logo"></div>
+		</div>
+
+		<div class="flex-container">
+			<div class="flexslider">
+				<ul class="slides">
+					<li><img src="images/demo/slides/1.jpg" alt="slide">
+						<p class="flex-caption">Touch Optimized Responsive Slider!</p></li>
+					<li><img src="images/demo/slides/2.jpg" alt="slide">
+						<p class="flex-caption">&laquo; Swipe Horizontally with Finger
+							&raquo;</p></li>
+					<li><img src="images/demo/slides/3.jpg" alt="slide"></li>
+					<li><img src="images/demo/slides/4.jpg" alt="slide"></li>
+				</ul>
+			</div>
+		</div>
+		<div class="shadow1box">
+			<img src="images/shadow1.png" class="shadow1" alt="shadow">
+		</div>
+
+		<div data-role="content">
+
+			<hr class="ornamental" />
+			<h3 class="home-title">Bienvenido a Abatarium!</h3>
+			<hr class="ornamental" />
+
+
+			<p>Para disfrutar de las bondades de nuestro sitio, debe iniciar
+				su sesión</p>
+
+			<div id="errors" class="hide ui-corner-all"></div>
+			<form name="frm-login" id="frm-login" action="" method="post">
+				<div data-role="fieldcontain">
+					<label for="username">Email</label> <input type="email"
+						data-clear-btn="true" name="username" id="username" value=""
+						placeholder="Ingresar su Email" class="required email" />
+				</div>
+				<div data-role="fieldcontain">
+					<label for="password">Clave</label> <input type="password"
+						data-clear-btn="true" name="password" id="password" value=""
+						placeholder="Introduzca su Clave" class="required" />
+				</div>
+				<input type="submit" id="btn-ingresar" value="Ingresar" />
+				<fieldset class="ui-grid-a">
+					<div class="ui-block-a">
+						<a href="#principal" data-prefetch>¿Olvido su clave?</a>
+					</div>
+					<div class="ui-block-b">
+						<a href="#principal" data-prefetch>Crear cuenta</a>
+					</div>
+				</fieldset>
+			</form>
+
+		</div>
+
+		<div data-role="footer">
+			<div data-role="navbar" class="custom-icons" data-grid="a">
+				<ul>
+					<li><a href="#ayuda" id="sign" data-icon="custom"
+						data-theme="b">Ayuda</a></li>
+					<li><a href="#acerca" id="presentation" data-icon="custom"
+						data-theme="b">Acerca de</a></li>
+				</ul>
+			</div>
+		</div>
+
+	</div>
+	<!-- Page::Main END -->
+
+
+	<!-- Page::Principal -->
+	<div data-role="page" id="principal">
+		<div data-role="header" class="page-header">
+			<div class="logo"></div>
+		</div>
+
+		<div class="flex-container">
+			<div class="flexslider">
+				<ul class="slides">
+					<li><img src="images/demo/slides/1.jpg" alt="slide">
+						<p class="flex-caption">Touch Optimized Responsive Slider!</p></li>
+					<li><img src="images/demo/slides/2.jpg" alt="slide">
+						<p class="flex-caption">&laquo; Swipe Horizontally with Finger
+							&raquo;</p></li>
+					<li><img src="images/demo/slides/3.jpg" alt="slide"></li>
+					<li><img src="images/demo/slides/4.jpg" alt="slide"></li>
+				</ul>
+			</div>
+		</div>
+		<div class="shadow1box">
+			<img src="images/shadow1.png" class="shadow1" alt="shadow">
+		</div>
+
+		<div data-role="content">
+			<ul data-role="listview" data-inset="true" id="listview"
+				style="margin-bottom: 0px">
+
+				<li><a href="#todas" data-prefetch data-transition="flip">Todas
+						las noticias</a></li>
+				<li><a href="#personalizadas" data-prefetch>Noticias
+						personalizadas</a></li>
+				<li><a href="#recomendadas" data-transition="flip"
+					data-prefetch>Noticias recomendadas</a></li>
+				<li><a href="#otras" data-prefetch data-ajax="false">Otras
+						noticias</a></li>
+			</ul>
+
+			<div class="shadow2box">
+				<img src="images/shadow2.png" class="shadow2" alt="shadow">
+			</div>
+		</div>
+
+		<div data-role="footer">
+			<div data-role="navbar" class="custom-icons" data-grid="c">
+				<ul>
+					<li><a href="#perfil" id="users" data-icon="custom"
+						data-theme="b" data-ajax="false">Perfil</a></li>
+					<li><a href="#ayuda" id="sign" data-icon="custom"
+						data-theme="b">Ayuda</a></li>
+					<li><a href="#configurar" id="pencil" data-icon="custom"
+						data-theme="b" data-ajax="false">Configurar</a></li>
+					<li><a href="#acerca" id="presentation" data-icon="custom"
+						data-theme="b">Acerca de</a></li>
+				</ul>
+			</div>
+
+		</div>
+	</div>
+	<!-- Page::Principal -->
+
+
+	<!-- Page::Perfil -->
+	<div data-role="page" id="perfil">
+		<div data-role="header" class="page-header">
+			<a href="#main" data-icon="arrow-l" data-iconpos="notext"
+				data-direction="reverse" data-rel="back" rel="external">Back</a>
+			<div class="logo"></div>
+			<a href="#principal" data-icon="home" data-iconpos="notext"
+				rel="external" class="ui-btn-right">Home</a>
+		</div>
+		<h2 class="pageTitle">
+			<span>Perfil del Usuario</span>
+		</h2>
+		<div class="shadow1box">
+			<img src="images/shadow1.png" class="shadow1" alt="shadow">
+		</div>
+
+		<div data-role="content">
+			<form name="frm-perfil" id="frm-perfil" action="" method="post">
+				<div data-role="fieldcontain">
+					<div class="picture-container">
+						<div class="perfil-picture">
+							<a href="#"><img src="images/demo/thumbs/thumb1.jpg" alt="" /></a>
+						</div>
+						<div class="shadow1box">
+							<img src="images/shadow1.png" class="shadow1" alt="shadow">
+						</div>
+					</div>
+				</div>
+
+				<div data-role="fieldcontain">
+					<label for="email">Email:</label> <input type="email" id="email"
+						name="email" placeholder="Correo electrónico"
+						data-clear-btn="true" value="" class="required email" />
+				</div>
+
+				<div data-role="fieldcontain">
+					<label for="name">Primer nombre:</label> <input type="text"
+						id="name" name="name" placeholder="Introduzca su Nombre"
+						data-clear-btn="true" value="" />
+				</div>
+
+				<div data-role="fieldcontain">
+					<label for="lastname">Primer apellido:</label> <input type="text"
+						id="lastname" name="lastname" placeholder="Indique su Apellido"
+						data-clear-btn="true" value="" />
+				</div>
+
+				<div data-role="fieldcontain">
+					<label for="location">Ubicación:</label> <input type="text"
+						id="location" name="location" placeholder="Ciudad y país"
+						data-clear-btn="true" value="" />
+				</div>
+
+				<div data-role="fieldcontain">
+					<label for="website">URL de su sitio web:</label> <input type="url"
+						id="website" name="website" placeholder="http://"
+						data-clear-btn="true" value="" />
+				</div>
+
+				<input type="submit" id="btn-guardar-perfil" value="Guardar Cambios" />
+			</form>
+		</div>
+	</div>
+	<!-- Page::Perfil END -->
+
+
+
+	<!-- Page::Configurar -->
+	<div data-role="page" id="configurar">
+		<div data-role="header" class="page-header" data-add-back-btn="true">
+			<a href="#index" data-icon="arrow-l" data-iconpos="notext"
+				data-direction="reverse" data-rel="back" rel="external">Back</a>
+			<div class="logo"></div>
+			<a href="#principal" data-icon="home" data-iconpos="notext"
+				data-direction="reverse" rel="external" class="ui-btn-right">Home</a>
+		</div>
+
+		<div class="flex-container">
+			<div class="flexslider">
+				<ul class="slides">
+					<li><img src="images/demo/slides/1.jpg" alt="slide">
+						<p class="flex-caption">Touch Optimized Responsive Slider!</p></li>
+					<li><img src="images/demo/slides/2.jpg" alt="slide">
+						<p class="flex-caption">&laquo; Swipe Horizontally with Finger
+							&raquo;</p></li>
+					<li><img src="images/demo/slides/3.jpg" alt="slide"></li>
+					<li><img src="images/demo/slides/4.jpg" alt="slide"></li>
+				</ul>
+			</div>
+		</div>
+
+		<h2 class="pageTitle">
+			<span>Configurar</span>
+		</h2>
+		<div class="shadow1box">
+			<img src="images/shadow1.png" class="shadow1" alt="shadow">
+		</div>
+
+		<div data-role="content">
+			<form name="frm-configurar" id="frm-configurar" action=""
+				method="post">
+				<div data-role="fieldcontain">
+					<label for="show_nnews">Cantidad de noticias a mostrar:</label> <input
+						type="range" name="show_nnews" id="show_nnews" min="1" max="20"
+						class="required numeric" value="10" />
+				</div>
+				<div data-role="fieldcontain">
+					<label for="keyword">Palabra Clave:</label> <input type="text"
+						name="keyword" id="keyword" />
+				</div>
+				<div data-role="fieldcontain">
+					<fieldset data-role="controlgroup">
+						<label>Palabras Activas:</label> <input type="checkbox"
+							name="checkbox-v-2a" id="checkbox-v-2a" checked="checked">
+						<label for="checkbox-v-2a">One</label> <input type="checkbox"
+							name="checkbox-v-2b" id="checkbox-v-2b" checked="checked">
+						<label for="checkbox-v-2b">Two</label> <input type="checkbox"
+							name="checkbox-v-2c" id="checkbox-v-2c" checked="checked">
+						<label for="checkbox-v-2c">Three</label>
+					</fieldset>
+				</div>
+				<input type="submit" id="btn-guardar-configuracion"
+					value="Guardar Configuración" />
+			</form>
+
+		</div>
+
+		<div data-role="footer">
+			<div data-role="navbar" class="custom-icons" data-grid="c">
+				<ul>
+					<li><a href="#perfil" id="users" data-icon="custom"
+						data-theme="b" data-ajax="false">Perfil</a></li>
+					<li><a href="#ayuda" id="sign" data-icon="custom"
+						data-theme="b">Ayuda</a></li>
+					<li><a href="#configurar" id="pencil" data-icon="custom"
+						data-theme="b" data-ajax="false">Configurar</a></li>
+					<li><a href="#acerca" id="presentation" data-icon="custom"
+						data-theme="b">Acerca de</a></li>
+				</ul>
+			</div>
+		</div>
+	</div>
+	<!-- Page::Configurar END -->
+
+
+
+
+
+
+
+
+	<!-- Page::Ayuda -->
+	<div data-role="page" id="ayuda">
+		<div data-role="header" class="page-header">
+			<a href="#main" data-icon="arrow-l" data-iconpos="notext"
+				data-direction="reverse" data-rel="back" rel="external">Back</a>
+			<div class="logo"></div>
+			<a href="#main" data-icon="home" data-iconpos="notext" rel="external"
+				class="ui-btn-right">Home</a>
+		</div>
+
+		<div class="flex-container">
+			<div class="flexslider">
+				<ul class="slides">
+					<li><img src="images/demo/slides/1.jpg" alt="slide">
+						<p class="flex-caption">Touch Optimized Responsive Slider!</p></li>
+					<li><img src="images/demo/slides/2.jpg" alt="slide">
+						<p class="flex-caption">&laquo; Swipe Horizontally with Finger
+							&raquo;</p></li>
+					<li><img src="images/demo/slides/3.jpg" alt="slide"></li>
+					<li><img src="images/demo/slides/4.jpg" alt="slide"></li>
+				</ul>
+			</div>
+		</div>
+
+		<h2 class="pageTitle">
+			<span>Ayuda (?)</span>
+		</h2>
+		<div class="shadow1box">
+			<img src="images/shadow1.png" class="shadow1" alt="shadow">
+		</div>
+
+		<div data-role="content">
+			<h4>¿Preguntas Frecuentes? FAQ's</h4>
+			<p>Todo lo que necesitas saber está aquí:</p>
+			<ul data-role="listview" data-inset="true" data-divider-theme="c">
+				<li data-role="list-divider">¿Cómo...?</li>
+				<li>R: De ésta manera...</li>
+				<li data-role="list-divider">¿Dónde...?</li>
+				<li>R: En éste lugar...</li>
+				<li data-role="list-divider">¿Cuándo...?</li>
+				<li>R: En tan fecha...</li>
+			</ul>
+		</div>
+
+		<div data-role="footer">
+			<div data-role="navbar" class="custom-icons" data-grid="a">
+				<ul>
+					<li><a href="#ayuda" id="sign" data-icon="custom"
+						data-theme="b">Ayuda</a></li>
+					<li><a href="#acerca" id="presentation" data-icon="custom"
+						data-theme="b">Acerca de</a></li>
+				</ul>
+			</div>
+		</div>
+	</div>
+	<!-- Page::Ayuda END -->
+
+
+	<!-- Page::Acerca -->
+	<div data-role="page" id="acerca">
+		<div data-role="header" class="page-header">
+			<a href="#main" data-icon="arrow-l" data-iconpos="notext"
+				data-direction="reverse" data-rel="back" rel="external">Back</a>
+			<div class="logo"></div>
+			<a href="#main" data-icon="home" data-iconpos="notext" rel="external"
+				class="ui-btn-right">Home</a>
+		</div>
+
+		<div class="flex-container">
+			<div class="flexslider">
+				<ul class="slides">
+					<li><img src="images/demo/slides/1.jpg" alt="slide">
+						<p class="flex-caption">Touch Optimized Responsive Slider!</p></li>
+					<li><img src="images/demo/slides/2.jpg" alt="slide">
+						<p class="flex-caption">&laquo; Swipe Horizontally with Finger
+							&raquo;</p></li>
+					<li><img src="images/demo/slides/3.jpg" alt="slide"></li>
+					<li><img src="images/demo/slides/4.jpg" alt="slide"></li>
+				</ul>
+			</div>
+		</div>
+
+		<h2 class="pageTitle">
+			<span>Acerca de Abatarium</span>
+		</h2>
+		<div class="shadow1box">
+			<img src="images/shadow1.png" class="shadow1" alt="shadow">
+		</div>
+
+		<div data-role="content">
+			<h4>Noticias en Linea ¡Por Fin!</h4>
+			<p>El dia de los periódicos pasó! Ahora lee tus noticias en tu
+				móvil.</p>
+			<h3>Noticias Personalizadas:</h3>
+			<ul>
+				<li>Categorizadas</li>
+				<li>Filtro por palabras claves</li>
+				<li>Y mucho más...</li>
+			</ul>
+		</div>
+
+		<div data-role="footer">
+			<div data-role="navbar" class="custom-icons" data-grid="a">
+				<ul>
+					<li><a href="#ayuda" id="sign" data-icon="custom"
+						data-theme="b">Ayuda</a></li>
+					<li><a href="#acerca" id="presentation" data-icon="custom"
+						data-theme="b">Acerca de</a></li>
+				</ul>
+			</div>
+		</div>
+	</div>
+	<!-- Page::Acerca END -->
+
+
+	<!-- SCRIPTS -->
+
+	<!-- add to homepage bubble on iphone, ipad  -->
+	<script type="text/javascript">
+		if ('standalone' in navigator && !navigator.standalone
+				&& (/iphone|ipod|ipad/gi).test(navigator.platform)
+				&& (/Safari/i).test(navigator.appVersion)) {
+			document
+					.write('<link rel="stylesheet" href="add-bubble\/style\/add2home.css">');
+			document
+					.write('<script type="application\/javascript" src="add-bubble\/src\/add2home.js" charset="utf-8"><\/s' + 'cript>');
+		}
+	</script>
+	<!-- /add to homepage bubble on iphone, ipad  -->
+
+</body>
+</html>
