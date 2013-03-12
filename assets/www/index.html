@@ -76,10 +76,10 @@
 				<input type="submit" id="btn-ingresar" value="Ingresar" />
 				<fieldset class="ui-grid-a">
 					<div class="ui-block-a">
-						<a href="#principal" data-prefetch>¿Olvido su clave?</a>
+						<a href="#recuperar" data-prefetch>¿Olvido su clave?</a>
 					</div>
 					<div class="ui-block-b">
-						<a href="#principal" data-prefetch>Crear cuenta</a>
+						<a href="#registro" data-prefetch>Crear cuenta</a>
 					</div>
 				</fieldset>
 			</form>
@@ -132,10 +132,6 @@
 						las noticias</a></li>
 				<li><a href="#personalizadas" data-prefetch>Noticias
 						personalizadas</a></li>
-				<li><a href="#recomendadas" data-transition="flip"
-					data-prefetch>Noticias recomendadas</a></li>
-				<li><a href="#otras" data-prefetch data-ajax="false">Otras
-						noticias</a></li>
 			</ul>
 
 			<div class="shadow2box">
@@ -160,6 +156,522 @@
 		</div>
 	</div>
 	<!-- Page::Principal -->
+
+
+	<!-- Page::Todas -->
+	<div data-role="page" id="todas">
+		<div data-role="header" class="page-header" data-add-back-btn="true">
+			<a href="#index" data-icon="arrow-l" data-iconpos="notext"
+				data-direction="reverse" data-rel="back" rel="external">Back</a>
+			<div class="logo"></div>
+			<a href="#principal" data-icon="home" data-iconpos="notext"
+				data-direction="reverse" rel="external" class="ui-btn-right">Home</a>
+		</div>
+
+		<div class="flex-container">
+			<div class="flexslider">
+				<ul class="slides">
+					<li><img src="images/demo/slides/1.jpg" alt="slide">
+						<p class="flex-caption">Touch Optimized Responsive Slider!</p></li>
+					<li><img src="images/demo/slides/2.jpg" alt="slide">
+						<p class="flex-caption">&laquo; Swipe Horizontally with Finger
+							&raquo;</p></li>
+					<li><img src="images/demo/slides/3.jpg" alt="slide"></li>
+					<li><img src="images/demo/slides/4.jpg" alt="slide"></li>
+				</ul>
+			</div>
+		</div>
+
+		<h2 class="pageTitle">
+			<span>Todas las Noticias</span>
+		</h2>
+		<div class="shadow1box">
+			<img src="images/shadow1.png" class="shadow1" alt="shadow">
+		</div>
+
+		<div data-role="content">
+			<div class="padd">
+				<div class="thumbnail-list">
+					<ul class="ui-listview" data-filter-theme="b"
+						data-filter-placeholder="Buscar noticias..." data-filter="true"
+						data-role="listview" style="margin-bottom: 0px">
+
+						<li data-role="list-divider">Monday, August 4, 2012 <span
+							class="ui-li-count">2</span>
+						</li>
+
+						<li class="ui-btn-icon-right ui-li-has-arrow">
+							<div class="ui-btn-inner ui-li" aria-hidden="true">
+								<div class="ui-btn-text">
+									<a class="ui-link-inherit" href="#demo-page">
+
+										<p class="ui-li-aside ui-li-desc">
+											<strong>2:00</strong> PM
+										</p> <img class="ui-li-thumb" src="images/demo/thumbs/thumb1.jpg">
+										<h3 class="ui-li-heading">jQuery Meetup</h3>
+										<p class="ui-li-desc">
+											<strong>First of many events taking place in Boston,
+												MA</strong>
+										</p>
+										<p class="ui-li-desc">Mark your calendar, this is going to
+											be great!</p>
+									</a>
+								</div>
+								<span class="ui-icon ui-icon-arrow-r ui-icon-shadow"></span>
+							</div>
+						</li>
+
+						<li class="ui-btn-icon-right ui-li-has-arrow">
+							<div class="ui-btn-inner ui-li" aria-hidden="true">
+								<div class="ui-btn-text">
+									<a class="ui-link-inherit" href="#demo-page">
+										<p class="ui-li-aside ui-li-desc">
+											<strong>10:30</strong> AM
+										</p>
+										<h3 class="ui-li-heading">WordPress Brunch</h3>
+										<p class="ui-li-desc">
+											<strong>Come meet local WordPress enthusiasts.</strong>
+										</p>
+										<p class="ui-li-desc">Currently looking for guest
+											speakers.</p>
+									</a>
+								</div>
+								<span class="ui-icon ui-icon-arrow-r ui-icon-shadow"></span>
+							</div>
+						</li>
+
+
+						<li data-role="list-divider">Wednesday, October 16, 2012 <span
+							class="ui-li-count">4</span>
+						</li>
+
+						<li class="ui-btn-icon-right ui-li-has-arrow">
+							<div class="ui-btn-inner ui-li" aria-hidden="true">
+								<div class="ui-btn-text">
+									<a class="ui-link-inherit" href="#demo-page">
+										<p class="ui-li-aside ui-li-desc">
+											<strong>5:30</strong> PM
+										</p>
+										<h3 class="ui-li-heading">Dinner at Rex</h3>
+										<p class="ui-li-desc">
+											<strong>Burgers for everyone.</strong>
+										</p>
+										<p class="ui-li-desc">Come join local burger enthusiasts.</p>
+									</a>
+								</div>
+								<span class="ui-icon ui-icon-arrow-r ui-icon-shadow"></span>
+							</div>
+						</li>
+
+						<li class="ui-btn-icon-right ui-li-has-arrow">
+							<div class="ui-btn-inner ui-li" aria-hidden="true">
+								<div class="ui-btn-text">
+									<a class="ui-link-inherit" href="#demo-page">
+										<p class="ui-li-aside ui-li-desc">
+											<strong>2:00</strong> PM
+										</p>
+										<h3 class="ui-li-heading">Interior Decorating 101</h3>
+										<p class="ui-li-desc">
+											<strong>A new event with some top talent.</strong>
+										</p>
+										<p class="ui-li-desc">Curtains, rugs, and pillows galore.</p>
+									</a>
+								</div>
+								<span class="ui-icon ui-icon-arrow-r ui-icon-shadow"></span>
+							</div>
+						</li>
+
+						<li class="ui-btn-icon-right ui-li-has-arrow">
+							<div class="ui-btn-inner ui-li" aria-hidden="true">
+								<div class="ui-btn-text">
+									<a class="ui-link-inherit" href="#demo-page">
+										<p class="ui-li-aside ui-li-desc">
+											<strong>11:30</strong> AM
+										</p>
+										<h3 class="ui-li-heading">Photoshop Convention</h3>
+										<p class="ui-li-desc">
+											<strong>Shop &amp; Chop</strong>
+										</p>
+										<p class="ui-li-desc">Learn from top Photoshop experts.</p>
+									</a>
+								</div>
+								<span class="ui-icon ui-icon-arrow-r ui-icon-shadow"></span>
+							</div>
+						</li>
+
+						<li class="ui-btn-icon-right ui-li-has-arrow">
+							<div class="ui-btn-inner ui-li" aria-hidden="true">
+								<div class="ui-btn-text">
+									<a class="ui-link-inherit" href="#demo-page">
+										<p class="ui-li-aside ui-li-desc">
+											<strong>9:00</strong> AM
+										</p>
+										<h3 class="ui-li-heading">Web Design for Smarties</h3>
+										<p class="ui-li-desc">
+											<strong>Do you have what it takes?</strong>
+										</p>
+										<p class="ui-li-desc">Come show off your design chops.</p>
+									</a>
+								</div>
+								<span class="ui-icon ui-icon-arrow-r ui-icon-shadow"></span>
+							</div>
+						</li>
+
+						<li data-role="list-divider">Sunday, December 20, 2012 <span
+							class="ui-li-count">2</span>
+						</li>
+
+						<li class="ui-btn-icon-right ui-li-has-arrow">
+							<div class="ui-btn-inner ui-li" aria-hidden="true">
+								<div class="ui-btn-text">
+									<a class="ui-link-inherit" href="#demo-page">
+										<p class="ui-li-aside ui-li-desc">
+											<strong>11:30</strong> AM
+										</p>
+										<h3 class="ui-li-heading">CSS3 Tricks</h3>
+										<p class="ui-li-desc">
+											<strong>Tables are gone, gradients are here.</strong>
+										</p>
+										<p class="ui-li-desc">Great talks planned, be here!</p>
+									</a>
+								</div>
+								<span class="ui-icon ui-icon-arrow-r ui-icon-shadow"></span>
+							</div>
+						</li>
+
+						<li class="ui-btn-icon-right ui-li-has-arrow">
+							<div class="ui-btn-inner ui-li" aria-hidden="true">
+								<div class="ui-btn-text">
+									<a class="ui-link-inherit" href="#demo-page">
+										<p class="ui-li-aside ui-li-desc">
+											<strong>7:00</strong> AM
+										</p>
+										<h3 class="ui-li-heading">Snow Day</h3>
+										<p class="ui-li-desc">
+											<strong>Group trip to the mountains.</strong>
+										</p>
+										<p class="ui-li-desc">Save the date..we're going
+											snowboarding!</p>
+									</a>
+								</div>
+								<span class="ui-icon ui-icon-arrow-r ui-icon-shadow"></span>
+							</div>
+						</li>
+					</ul>
+					<div class="shadow2box">
+						<img src="images/shadow1.png" class="shadow1" alt="shadow">
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div data-role="footer">
+			<div data-role="navbar" class="custom-icons" data-grid="c">
+				<ul>
+					<li><a href="#perfil" id="users" data-icon="custom"
+						data-theme="b" data-ajax="false">Perfil</a></li>
+					<li><a href="#ayuda" id="sign" data-icon="custom"
+						data-theme="b">Ayuda</a></li>
+					<li><a href="#configurar" id="pencil" data-icon="custom"
+						data-theme="b" data-ajax="false">Configurar</a></li>
+					<li><a href="#acerca" id="presentation" data-icon="custom"
+						data-theme="b">Acerca de</a></li>
+				</ul>
+			</div>
+
+		</div>
+	</div>
+	<!-- Page::Todas END -->
+
+
+	<!-- Page::Personalizadas -->
+	<div data-role="page" id="personalizadas">
+		<div data-role="header" class="page-header" data-add-back-btn="true">
+			<a href="#index" data-icon="arrow-l" data-iconpos="notext"
+				data-direction="reverse" data-rel="back" rel="external">Back</a>
+			<div class="logo"></div>
+			<a href="#principal" data-icon="home" data-iconpos="notext"
+				data-direction="reverse" rel="external" class="ui-btn-right">Home</a>
+		</div>
+
+		<div class="flex-container">
+			<div class="flexslider">
+				<ul class="slides">
+					<li><img src="images/demo/slides/1.jpg" alt="slide">
+						<p class="flex-caption">Touch Optimized Responsive Slider!</p></li>
+					<li><img src="images/demo/slides/2.jpg" alt="slide">
+						<p class="flex-caption">&laquo; Swipe Horizontally with Finger
+							&raquo;</p></li>
+					<li><img src="images/demo/slides/3.jpg" alt="slide"></li>
+					<li><img src="images/demo/slides/4.jpg" alt="slide"></li>
+				</ul>
+			</div>
+		</div>
+
+		<h2 class="pageTitle">
+			<span>Noticias Personalizadas</span>
+		</h2>
+		<div class="shadow1box">
+			<img src="images/shadow1.png" class="shadow1" alt="shadow">
+		</div>
+
+		<div data-role="content">
+			<div class="padd">
+				<div class="thumbnail-list">
+					<ul class="ui-listview" data-filter-theme="b"
+						data-filter-placeholder="Buscar noticias..." data-filter="true"
+						data-role="listview" style="margin-bottom: 0px">
+
+						<li data-role="list-divider">Monday, August 4, 2012 <span
+							class="ui-li-count">2</span>
+						</li>
+
+						<li class="ui-btn-icon-right ui-li-has-arrow">
+							<div class="ui-btn-inner ui-li" aria-hidden="true">
+								<div class="ui-btn-text">
+									<a class="ui-link-inherit" href="#demo-page">
+
+										<p class="ui-li-aside ui-li-desc">
+											<strong>2:00</strong> PM
+										</p> <img class="ui-li-thumb" src="images/demo/thumbs/thumb1.jpg">
+										<h3 class="ui-li-heading">jQuery Meetup</h3>
+										<p class="ui-li-desc">
+											<strong>First of many events taking place in Boston,
+												MA</strong>
+										</p>
+										<p class="ui-li-desc">Mark your calendar, this is going to
+											be great!</p>
+									</a>
+								</div>
+								<span class="ui-icon ui-icon-arrow-r ui-icon-shadow"></span>
+							</div>
+						</li>
+
+						<li class="ui-btn-icon-right ui-li-has-arrow">
+							<div class="ui-btn-inner ui-li" aria-hidden="true">
+								<div class="ui-btn-text">
+									<a class="ui-link-inherit" href="#demo-page">
+										<p class="ui-li-aside ui-li-desc">
+											<strong>10:30</strong> AM
+										</p>
+										<h3 class="ui-li-heading">WordPress Brunch</h3>
+										<p class="ui-li-desc">
+											<strong>Come meet local WordPress enthusiasts.</strong>
+										</p>
+										<p class="ui-li-desc">Currently looking for guest
+											speakers.</p>
+									</a>
+								</div>
+								<span class="ui-icon ui-icon-arrow-r ui-icon-shadow"></span>
+							</div>
+						</li>
+
+
+						<li data-role="list-divider">Wednesday, October 16, 2012 <span
+							class="ui-li-count">4</span>
+						</li>
+
+						<li class="ui-btn-icon-right ui-li-has-arrow">
+							<div class="ui-btn-inner ui-li" aria-hidden="true">
+								<div class="ui-btn-text">
+									<a class="ui-link-inherit" href="#demo-page">
+										<p class="ui-li-aside ui-li-desc">
+											<strong>5:30</strong> PM
+										</p>
+										<h3 class="ui-li-heading">Dinner at Rex</h3>
+										<p class="ui-li-desc">
+											<strong>Burgers for everyone.</strong>
+										</p>
+										<p class="ui-li-desc">Come join local burger enthusiasts.</p>
+									</a>
+								</div>
+								<span class="ui-icon ui-icon-arrow-r ui-icon-shadow"></span>
+							</div>
+						</li>
+
+						<li class="ui-btn-icon-right ui-li-has-arrow">
+							<div class="ui-btn-inner ui-li" aria-hidden="true">
+								<div class="ui-btn-text">
+									<a class="ui-link-inherit" href="#demo-page">
+										<p class="ui-li-aside ui-li-desc">
+											<strong>2:00</strong> PM
+										</p>
+										<h3 class="ui-li-heading">Interior Decorating 101</h3>
+										<p class="ui-li-desc">
+											<strong>A new event with some top talent.</strong>
+										</p>
+										<p class="ui-li-desc">Curtains, rugs, and pillows galore.</p>
+									</a>
+								</div>
+								<span class="ui-icon ui-icon-arrow-r ui-icon-shadow"></span>
+							</div>
+						</li>
+
+						<li class="ui-btn-icon-right ui-li-has-arrow">
+							<div class="ui-btn-inner ui-li" aria-hidden="true">
+								<div class="ui-btn-text">
+									<a class="ui-link-inherit" href="#demo-page">
+										<p class="ui-li-aside ui-li-desc">
+											<strong>11:30</strong> AM
+										</p>
+										<h3 class="ui-li-heading">Photoshop Convention</h3>
+										<p class="ui-li-desc">
+											<strong>Shop &amp; Chop</strong>
+										</p>
+										<p class="ui-li-desc">Learn from top Photoshop experts.</p>
+									</a>
+								</div>
+								<span class="ui-icon ui-icon-arrow-r ui-icon-shadow"></span>
+							</div>
+						</li>
+
+						<li class="ui-btn-icon-right ui-li-has-arrow">
+							<div class="ui-btn-inner ui-li" aria-hidden="true">
+								<div class="ui-btn-text">
+									<a class="ui-link-inherit" href="#demo-page">
+										<p class="ui-li-aside ui-li-desc">
+											<strong>9:00</strong> AM
+										</p>
+										<h3 class="ui-li-heading">Web Design for Smarties</h3>
+										<p class="ui-li-desc">
+											<strong>Do you have what it takes?</strong>
+										</p>
+										<p class="ui-li-desc">Come show off your design chops.</p>
+									</a>
+								</div>
+								<span class="ui-icon ui-icon-arrow-r ui-icon-shadow"></span>
+							</div>
+						</li>
+
+						<li data-role="list-divider">Sunday, December 20, 2012 <span
+							class="ui-li-count">2</span>
+						</li>
+
+						<li class="ui-btn-icon-right ui-li-has-arrow">
+							<div class="ui-btn-inner ui-li" aria-hidden="true">
+								<div class="ui-btn-text">
+									<a class="ui-link-inherit" href="#demo-page">
+										<p class="ui-li-aside ui-li-desc">
+											<strong>11:30</strong> AM
+										</p>
+										<h3 class="ui-li-heading">CSS3 Tricks</h3>
+										<p class="ui-li-desc">
+											<strong>Tables are gone, gradients are here.</strong>
+										</p>
+										<p class="ui-li-desc">Great talks planned, be here!</p>
+									</a>
+								</div>
+								<span class="ui-icon ui-icon-arrow-r ui-icon-shadow"></span>
+							</div>
+						</li>
+
+						<li class="ui-btn-icon-right ui-li-has-arrow">
+							<div class="ui-btn-inner ui-li" aria-hidden="true">
+								<div class="ui-btn-text">
+									<a class="ui-link-inherit" href="#demo-page">
+										<p class="ui-li-aside ui-li-desc">
+											<strong>7:00</strong> AM
+										</p>
+										<h3 class="ui-li-heading">Snow Day</h3>
+										<p class="ui-li-desc">
+											<strong>Group trip to the mountains.</strong>
+										</p>
+										<p class="ui-li-desc">Save the date..we're going
+											snowboarding!</p>
+									</a>
+								</div>
+								<span class="ui-icon ui-icon-arrow-r ui-icon-shadow"></span>
+							</div>
+						</li>
+					</ul>
+					<div class="shadow2box">
+						<img src="images/shadow1.png" class="shadow1" alt="shadow">
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div data-role="footer">
+			<div data-role="navbar" class="custom-icons" data-grid="c">
+				<ul>
+					<li><a href="#perfil" id="users" data-icon="custom"
+						data-theme="b" data-ajax="false">Perfil</a></li>
+					<li><a href="#ayuda" id="sign" data-icon="custom"
+						data-theme="b">Ayuda</a></li>
+					<li><a href="#configurar" id="pencil" data-icon="custom"
+						data-theme="b" data-ajax="false">Configurar</a></li>
+					<li><a href="#acerca" id="presentation" data-icon="custom"
+						data-theme="b">Acerca de</a></li>
+				</ul>
+			</div>
+
+		</div>
+	</div>
+	<!-- Page::Personalizadas END -->
+
+
+	<!-- Page::Registro -->
+	<div data-role="page" id="registro">
+		<div data-role="header" class="page-header">
+			<a href="#main" data-icon="arrow-l" data-iconpos="notext"
+				data-direction="reverse" data-rel="back" rel="external">Back</a>
+			<div class="logo"></div>
+			<a href="#principal" data-icon="home" data-iconpos="notext"
+				rel="external" class="ui-btn-right">Home</a>
+		</div>
+		<h2 class="pageTitle">
+			<span>Registro de Usuario</span>
+		</h2>
+		<div class="shadow1box">
+			<img src="images/shadow1.png" class="shadow1" alt="shadow">
+		</div>
+
+		<div data-role="content">
+			<form name="frm-registro" id="frm-registro" action="" method="post">
+				<div data-role="fieldcontain">
+					<label for="email">Email:</label> <input type="email" id="email"
+						name="email" placeholder="Correo electrónico"
+						data-clear-btn="true" value="" class="required email" />
+				</div>
+				<p>Su clave será enviada al correo</p>
+
+				<input type="submit" id="btn-nuevo-usuario" value="Registrar" />
+			</form>
+		</div>
+	</div>
+	<!-- Page::Registro END -->
+
+
+	<!-- Page::Recuperar -->
+	<div data-role="page" id="recuperar">
+		<div data-role="header" class="page-header">
+			<a href="#main" data-icon="arrow-l" data-iconpos="notext"
+				data-direction="reverse" data-rel="back" rel="external">Back</a>
+			<div class="logo"></div>
+			<a href="#principal" data-icon="home" data-iconpos="notext"
+				rel="external" class="ui-btn-right">Home</a>
+		</div>
+		<h2 class="pageTitle">
+			<span>Recuperar Clave</span>
+		</h2>
+		<div class="shadow1box">
+			<img src="images/shadow1.png" class="shadow1" alt="shadow">
+		</div>
+
+		<div data-role="content">
+			<form name="frm-recuperar" id="frm-recuperar" action="" method="post">
+				<div data-role="fieldcontain">
+					<label for="email">Email:</label> <input type="email" id="email"
+						name="email" placeholder="Correo electrónico"
+						data-clear-btn="true" value="" class="required email" />
+				</div>
+				<p>Su clave será enviada al correo</p>
+
+				<input type="submit" id="btn-recuperar" value="Recuperar" />
+			</form>
+		</div>
+	</div>
+	<!-- Page::Recuperar END -->
 
 
 	<!-- Page::Perfil -->
