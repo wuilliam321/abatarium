@@ -15,8 +15,8 @@
 <script type="text/javascript" src="js/jquery-1.6.4.min.js"></script>
 <script type="text/javascript" src="js/jquery.mobile-1.1.0.min.js"></script>
 <script type="text/javascript" src="js/jquery.validate.min.js"></script>
-<script type="text/javascript" src="js/index.js"></script>
 <script type="text/javascript" src="js/jquery.flexslider-min.js"></script>
+<script type="text/javascript" src="js/index.js"></script>
 
 <script type="text/javascript">
 	app.initialize();
@@ -190,7 +190,14 @@
 		</div>
 
 		<div data-role="content">
-			<div class="padd"></div>
+			<div class="padd">
+				<div class="thumbnail-list">
+					<ul class="ui-listview" data-filter-theme="b" id="all-news"
+						data-filter-placeholder="Buscar noticias..." data-filter="true"
+						data-role="listview" style="margin-bottom: 0px">
+					</ul>
+				</div>
+			</div>
 		</div>
 
 		<div data-role="footer">

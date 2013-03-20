@@ -258,12 +258,52 @@ var app = {
 	
 	// Obteniendo las ultimas noticias
 	getLatestNews : function () {
-		console.log("Algo");
 		var url = "http://news/api/news/getByKeywords";
 		$.ajax({
 			url: url,
-			success: function (data) {
-				console.log(data);
+			dataType: 'jsonp',
+			timeout: 5000,
+			jsonpCallback: "callback",
+			success: function (data, status) {
+				$(data).each(function (i, item) {
+					resume = $("<p>").text(item.News.resume).addClass("ui-li-desc");
+					title = $("<h3>").text(item.News.title).addClass("ui-li-heading");
+					link = $("<a>").attr("href", item.News.link).addClass("ui-link-inherit");
+					left = $("<div>").addClass("ui-btn-text");
+					arrow = $("<span>").addClass("ui-icon ui-icon-arrow-r ui-icon-shadow");
+					container = $("<li>").addClass("ui-btn-icon-right ui-li-has-arrow");
+					button = $("<div>").addClass("ui-btn-inner ui-li").attr("aria-hidden", true);
+					
+					$(left).append($(link).html()).append($(title).html()).append($(resume).html())
+					$(button).append($(left).html()).append($(arrow).html());
+					$(container).append($(button).html());
+					$("#all-news").append($(container).html());
+						/** <li data-role="list-divider">Monday, August 4, 2012 <span
+							class="ui-li-count">2</span>
+						</li>
+
+						<li class="ui-btn-icon-right ui-li-has-arrow"> container
+							<div class="ui-btn-inner ui-li" aria-hidden="true"> button
+								<div class="ui-btn-text"> left
+									<a class="ui-link-inherit" href="#demo-page">
+
+										<p class="ui-li-aside ui-li-desc">
+											<strong>2:00</strong> PM
+										</p> <img class="ui-li-thumb" src="images/demo/thumbs/thumb1.jpg">
+										<h3 class="ui-li-heading">jQuery Meetup</h3>
+										<p class="ui-li-desc">
+											<strong>First of many events taking place in Boston,
+												MA</strong>
+										</p>
+										<p class="ui-li-desc">Mark your calendar, this is going to
+											be great!</p>
+									</a>
+								</div>
+								<span class="ui-icon ui-icon-arrow-r ui-icon-shadow"></span> arrow
+							</div>
+						</li>
+						**/
+				})
 			}
 		});
 	}
