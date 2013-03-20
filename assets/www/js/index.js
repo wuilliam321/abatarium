@@ -30,7 +30,7 @@ var app = {
 		document.addEventListener('deviceready', this.onDeviceReady, false);
 
 		// Activo cuando esta en TESTPC
-		// this.onDeviceReady();
+		//this.onDeviceReady();
 	},
 	// deviceready Event Handler
 	//
@@ -51,6 +51,9 @@ var app = {
 
 			// Iniciando sliders
 			app.doStartSliders();
+			$("#todas").live('pagebeforeshow', function(event) {
+				app.getLatestNews();
+			});
 		})
 	},
 
@@ -252,4 +255,16 @@ var app = {
 			// console.log("Recuperando clave");
 		})
 	},
+	
+	// Obteniendo las ultimas noticias
+	getLatestNews : function () {
+		console.log("Algo");
+		var url = "http://news/api/news/getByKeywords";
+		$.ajax({
+			url: url,
+			success: function (data) {
+				console.log(data);
+			}
+		});
+	}
 };
