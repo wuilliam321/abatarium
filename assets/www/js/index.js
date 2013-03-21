@@ -274,7 +274,7 @@ var app = {
 					arrow = $("<span>").addClass("ui-icon ui-icon-arrow-r ui-icon-shadow");
 					link = $("<a>").attr("href", item.News.link).addClass("ui-link-inherit");
 					title = $("<h3>").text(item.News.title).addClass("ui-li-heading");
-					resume = $("<p>").text(item.News.resume).addClass("ui-li-desc");
+					resume = $("<p>").text($(item.News.resume).text()).addClass("ui-li-desc");
 					
 					$(link).append(title)
 					$(link).append(resume)
