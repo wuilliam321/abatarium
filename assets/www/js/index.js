@@ -258,6 +258,7 @@ var app = {
 	
 	// Obteniendo las ultimas noticias
 	getLatestNews : function () {
+		$("#all-news").empty();
 		var url = "http://news/api/news/getByKeywords";
 		$.ajax({
 			url: url,
@@ -266,18 +267,22 @@ var app = {
 			jsonpCallback: "callback",
 			success: function (data, status) {
 				$(data).each(function (i, item) {
-					resume = $("<p>").text(item.News.resume).addClass("ui-li-desc");
-					title = $("<h3>").text(item.News.title).addClass("ui-li-heading");
-					link = $("<a>").attr("href", item.News.link).addClass("ui-link-inherit");
+					console.log(i);
+					container = $("<li>").addClass("ui-btn-icon-right ui-li-has-arrow ui-li ui-li-static ui-body-c");
+					button = $("<div>").addClass("ui-btn-inner ui-li ui-li-static ui-body-c").attr("aria-hidden", true);
 					left = $("<div>").addClass("ui-btn-text");
 					arrow = $("<span>").addClass("ui-icon ui-icon-arrow-r ui-icon-shadow");
-					container = $("<li>").addClass("ui-btn-icon-right ui-li-has-arrow");
-					button = $("<div>").addClass("ui-btn-inner ui-li").attr("aria-hidden", true);
+					link = $("<a>").attr("href", item.News.link).addClass("ui-link-inherit");
+					title = $("<h3>").text(item.News.title).addClass("ui-li-heading");
+					resume = $("<p>").text(item.News.resume).addClass("ui-li-desc");
 					
-					$(left).append($(link).html()).append($(title).html()).append($(resume).html())
-					$(button).append($(left).html()).append($(arrow).html());
-					$(container).append($(button).html());
-					$("#all-news").append($(container).html());
+					$(link).append(title)
+					$(link).append(resume)
+					$(left).append(link)
+					$(button).append(left);
+					$(button).append(arrow);
+					$(container).append(button);
+					$("#all-news").append(container);
 						/** <li data-role="list-divider">Monday, August 4, 2012 <span
 							class="ui-li-count">2</span>
 						</li>
@@ -302,6 +307,9 @@ var app = {
 								<span class="ui-icon ui-icon-arrow-r ui-icon-shadow"></span> arrow
 							</div>
 						</li>
+						
+						
+						
 						**/
 				})
 			}
