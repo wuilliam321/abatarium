@@ -57,6 +57,10 @@ var app = {
 			$("#personalizadas").live('pagebeforeshow', function(event) {
 				app.getLatestNewsByKW("#custom-news");
 			});
+			$("a.open-new").live("click", function () {
+				console.log($(this));
+				app.getNew($(this).attr("alt"))
+			})
 		})
 	},
 
@@ -274,7 +278,7 @@ var app = {
 	// Obtenido las noticias
 	getNews: function (news_container, params) {
 		$(news_container).empty();
-		var url = "http://www.wlacruz.com.ve/p/news_api/news/getByKeywords" + params;
+		var url = "http://news/api/news/getByKeywords" + params;
 		$.ajax({
 			url: url,
 			dataType: 'jsonp',
@@ -286,7 +290,7 @@ var app = {
 					button = $("<div>").addClass("ui-btn-inner ui-li ui-li-static ui-body-c").attr("aria-hidden", true);
 					left = $("<div>").addClass("ui-btn-text");
 					arrow = $("<span>").addClass("ui-icon ui-icon-arrow-r ui-icon-shadow");
-					link = $("<a>").attr("href", item.News.link).addClass("ui-link-inherit");
+					link = $("<a>").attr("href", "#ver-noticia").addClass("ui-link-inherit open-new").attr({"data-ajax": "false", "alt": item.News.id});
 					title = $("<h3>").text(item.News.title).addClass("ui-li-heading");
 					resume = $("<p>").text($(item.News.resume).text()).addClass("ui-li-desc");
 					
@@ -298,6 +302,23 @@ var app = {
 					$(container).append(button);
 					$(news_container).append(container);
 				})
+			}
+		});
+	},
+	
+	// Obtenido la noticia segun id
+	getNew: function (params) {
+		$("#new-title").empty();
+		$("#new-content").empty();
+		var url = "http://news/api/news/getById/" + params;
+		$.ajax({
+			url: url,
+			dataType: 'jsonp',
+			timeout: 5000,
+			jsonpCallback: "callback",
+			success: function (item, status) {
+				$("#new-title").html(item.News.title)
+				$("#new-content").html(item.News.content)
 			}
 		});
 	}
