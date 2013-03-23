@@ -274,7 +274,7 @@ var app = {
 	// Obtenido las noticias
 	getNews: function (news_container, params) {
 		$(news_container).empty();
-		var url = "http://news/api/news/getByKeywords" + params;
+		var url = "http://www.wlacruz.com.ve/p/news_api/news/getByKeywords" + params;
 		$.ajax({
 			url: url,
 			dataType: 'jsonp',
@@ -282,7 +282,6 @@ var app = {
 			jsonpCallback: "callback",
 			success: function (data, status) {
 				$(data).each(function (i, item) {
-					console.log(i);
 					container = $("<li>").addClass("ui-btn-icon-right ui-li-has-arrow ui-li ui-li-static ui-body-c");
 					button = $("<div>").addClass("ui-btn-inner ui-li ui-li-static ui-body-c").attr("aria-hidden", true);
 					left = $("<div>").addClass("ui-btn-text");
