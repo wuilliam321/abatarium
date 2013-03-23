@@ -52,7 +52,10 @@ var app = {
 			// Iniciando sliders
 			app.doStartSliders();
 			$("#todas").live('pagebeforeshow', function(event) {
-				app.getLatestNews();
+				app.getLatestNews("#all-news");
+			});
+			$("#personalizadas").live('pagebeforeshow', function(event) {
+				app.getLatestNewsByKW("#custom-news");
 			});
 		})
 	},
@@ -257,9 +260,21 @@ var app = {
 	},
 	
 	// Obteniendo las ultimas noticias
-	getLatestNews : function () {
-		$("#all-news").empty();
-		var url = "http://news/api/news/getByKeywords";
+	getLatestNews : function (news_container) {
+		params = '';
+		app.getNews(news_container, params);
+	},
+	
+	// Obteniendo las ultimas noticias por keywords
+	getLatestNewsByKW: function (news_container) {
+		params = '/yavi/alba'; // TODO: buscar las kw del usuario
+		app.getNews(news_container, params);
+	},
+	
+	// Obtenido las noticias
+	getNews: function (news_container, params) {
+		$(news_container).empty();
+		var url = "http://news/api/news/getByKeywords" + params;
 		$.ajax({
 			url: url,
 			dataType: 'jsonp',
@@ -282,35 +297,7 @@ var app = {
 					$(button).append(left);
 					$(button).append(arrow);
 					$(container).append(button);
-					$("#all-news").append(container);
-						/** <li data-role="list-divider">Monday, August 4, 2012 <span
-							class="ui-li-count">2</span>
-						</li>
-
-						<li class="ui-btn-icon-right ui-li-has-arrow"> container
-							<div class="ui-btn-inner ui-li" aria-hidden="true"> button
-								<div class="ui-btn-text"> left
-									<a class="ui-link-inherit" href="#demo-page">
-
-										<p class="ui-li-aside ui-li-desc">
-											<strong>2:00</strong> PM
-										</p> <img class="ui-li-thumb" src="images/demo/thumbs/thumb1.jpg">
-										<h3 class="ui-li-heading">jQuery Meetup</h3>
-										<p class="ui-li-desc">
-											<strong>First of many events taking place in Boston,
-												MA</strong>
-										</p>
-										<p class="ui-li-desc">Mark your calendar, this is going to
-											be great!</p>
-									</a>
-								</div>
-								<span class="ui-icon ui-icon-arrow-r ui-icon-shadow"></span> arrow
-							</div>
-						</li>
-						
-						
-						
-						**/
+					$(news_container).append(container);
 				})
 			}
 		});
