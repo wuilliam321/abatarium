@@ -58,7 +58,6 @@ var app = {
 				app.getLatestNewsByKW("#custom-news");
 			});
 			$("a.open-new").live("click", function () {
-				console.log($(this));
 				app.getNew($(this).attr("alt"))
 			})
 		})
@@ -278,7 +277,8 @@ var app = {
 	// Obtenido las noticias
 	getNews: function (news_container, params) {
 		$(news_container).empty();
-		var url = "http://news/api/news/getByKeywords" + params;
+		var url = "http://www.wlacruz.com.ve/p/news_api/news/getByKeywords" + params;
+		//var url = "http://news/api/news/getByKeywords" + params;
 		$.ajax({
 			url: url,
 			dataType: 'jsonp',
@@ -310,7 +310,8 @@ var app = {
 	getNew: function (params) {
 		$("#new-title").empty();
 		$("#new-content").empty();
-		var url = "http://news/api/news/getById/" + params;
+		var url = "http://www.wlacruz.com.ve/p/news_api/news/getById/" + params;
+		//var url = "http://news/api/news/getById/" + params;
 		$.ajax({
 			url: url,
 			dataType: 'jsonp',
