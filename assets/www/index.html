@@ -74,14 +74,8 @@
 						placeholder="Introduzca su Clave" class="required" />
 				</div>
 				<input type="submit" id="btn-ingresar" value="Ingresar" />
-				<fieldset class="ui-grid-a">
-					<div class="ui-block-a">
-						<a href="#recuperar" data-prefetch>¿Olvido su clave?</a>
-					</div>
-					<div class="ui-block-b">
-						<a href="#registro" data-prefetch>Crear cuenta</a>
-					</div>
-				</fieldset>
+				<a href="#recuperar" data-role="button" data-theme="b" data-prefetch>¿Olvido su clave?</a>
+				<a href="#registro" data-role="button" data-theme="b" data-prefetch>Crear cuenta</a>
 			</form>
 
 		</div>
@@ -318,8 +312,8 @@
 		<div data-role="content">
 			<form name="frm-registro" id="frm-registro" action="" method="post">
 				<div data-role="fieldcontain">
-					<label for="email">Email:</label> <input type="email" id="email"
-						name="email" placeholder="Correo electrónico"
+					<label for="UserEmail">Email:</label> <input type="email" id="UserEmail"
+						name="data[User][email]" placeholder="Correo electrónico"
 						data-clear-btn="true" value="" class="required email" />
 				</div>
 				<p>Su clave será enviada al correo</p>

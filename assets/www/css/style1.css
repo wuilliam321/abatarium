@@ -2178,3 +2178,6 @@ form label.error {
 	color:red;
 	margin-left:23%;
 }
+#new-content {
+	text-align: justify;
+}

@@ -17,6 +17,12 @@
  * under the License.
  */
 var app = {
+	// Database Object
+	db: null,
+	
+	// Connected flag
+	connected: false,
+	
 	// Application Constructor
 	initialize : function() {
 		this.bindEvents();
@@ -44,7 +50,7 @@ var app = {
 	mainEvent : function() {
 		$(function() {
 			// Conectar a la BD
-			// app.doConnect(params);
+			app.doConnect('newsdb', '1.0', 'News Database', 1000000);
 
 			// Checkear sesion
 			// app.doCheckSession();
@@ -146,12 +152,12 @@ var app = {
 						inputs = $("#frm-registro").serializeArray()
 
 						// Guardando Perfil
-						app.doCreateUser();
+						app.doCreateUser(inputs);
 						$.mobile.changePage("index.html#main");
 					}
 				},
 				messages : {
-					email : {
+					"data[User][email]" : {
 						required : 'Email es un campo requerido',
 						email : "Debe ser un correo electrónico"
 					}
@@ -206,7 +212,7 @@ var app = {
 					// Si el form es valido
 					if ($("#frm-configurar").valid()) {
 						// Capturando la data
-						inputs = $("#frm-configurar").serializeArray()
+						inputs = $("#frm-configurar").serialize()
 
 						// Guardando Perfil
 						app.doSaveSettings();
@@ -249,9 +255,26 @@ var app = {
 	},
 
 	// Guardando nuevo usuario
-	doCreateUser : function() {
+	doCreateUser : function(user) {
 		$(function() {
-			// console.log("Creando el usuario");
+			var url = "http://www.wlacruz.com.ve/p/news_api/users/create";
+			//var url = "http://news/api/users/create";
+			console.log(user);
+			//$.ajax({
+			//	url: url,
+			//	data: user,
+			//	type: "POST",
+			//	accepts: "application/x-www-form-urlencoded;charset=utf-8",
+			//	//dataType: 'json',
+			//	//jsonpCallback: "callback",
+			//	success: function (data) {
+			//		console.log(data);
+			//	},
+			//	error: function (e) {
+			//		console.log(e);
+			//	}
+			//});
+			$.post(url, user, function (e) { console.log(e); })
 		})
 	},
 
@@ -270,7 +293,7 @@ var app = {
 	
 	// Obteniendo las ultimas noticias por keywords
 	getLatestNewsByKW: function (news_container) {
-		params = '/yavi/alba'; // TODO: buscar las kw del usuario
+		params = '/chavez/capriles/maduro/venezuela/caracas'; // TODO: buscar las kw del usuario
 		app.getNews(news_container, params);
 	},
 	
@@ -322,5 +345,55 @@ var app = {
 				$("#new-content").html(item.News.content)
 			}
 		});
-	}
+	},
+	
+	
+	
+	/**
+	 * Metodos de base de datos
+	 */
+	// On success
+	onErrorDB: function (error) {
+		console.log("Error: (" + error.code + ") " + error.message);
+	},
+	populateDB: function (tx) {
+		tx.executeSql("CREATE TABLE IF NOT EXISTS news (id INTEGER PRIMARY KEY AUTOINCREMENT, diary TEXT, title TEXT, link TEXT, author TEXT, date TEXT, category_id TEXT, category_alias TEXT, resume TEXT, content TEXT, images TEXT, tags TEXT, showed NUMERIC, reviewed NUMERIC, created NUMERIC)");
+		
+		// TODO: Esto va en una funcion
+		//var url = "http://www.wlacruz.com.ve/p/news_api/news/getByKeywords";
+		//var news = [];
+		//$.ajax({
+		//	url: url,
+		//	dataType: 'jsonp',
+		//	timeout: 5000,
+		//	jsonpCallback: "callback",
+		//	async: false,
+		//	headers: {"Content-type":"text/javascript"},
+		//	success: function (data, status) {
+		//		$(data).each(function (i, item) {
+		//			news[i] = item;
+		//		})
+		//	}
+		//}).done(function () {
+		//	$(news).each(function (i, item) {
+		//		app.db.transaction(function (ctx) {
+		//			ctx.executeSql("SELECT * FROM news WHERE id = ?", [item.News.id], function (tx, results) {
+		//				if (results.rows.length < 1) {
+		//					console.log("Guardando " + item.News.id);
+		//					tx.executeSql("INSERT INTO news (id, title, link, resume) VALUES (?,?,?,?)", [item.News.id, item.News.title, item.News.link, item.News.resume], null, app.onErrorDB);
+		//				} else {
+		//					console.log(item.News.id + " Ya existe");
+		//				}
+		//			})
+		//			//ctx.executeSql("INSERT INTO news (id, title, link, resume) VALUES (?,?,?,?)", [item.News.id, item.News.title, item.News.link, item.News.resume], null, app.onErrorDB);
+		//		});
+		//	})
+		//});
+	},
+	
+	// MEtodo de conexion a la base de datos
+	doConnect: function (db_name, db_version, db_display_name, db_size) {
+		app.db = window.openDatabase(db_name, db_version, db_display_name, db_size);
+		app.db.transaction(app.populateDB, app.onErrorDB);
+	},
 };
