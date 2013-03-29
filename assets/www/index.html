@@ -16,6 +16,7 @@
 <script type="text/javascript" src="js/jquery.mobile-1.1.0.min.js"></script>
 <script type="text/javascript" src="js/jquery.validate.min.js"></script>
 <script type="text/javascript" src="js/jquery.flexslider-min.js"></script>
+<script type="text/javascript" src="js/md5.js"></script>
 <script type="text/javascript" src="js/index.js"></script>
 
 <script type="text/javascript">
@@ -64,13 +65,13 @@
 			<div id="errors" class="hide ui-corner-all"></div>
 			<form name="frm-login" id="frm-login" action="" method="post">
 				<div data-role="fieldcontain">
-					<label for="username">Email</label> <input type="email"
-						data-clear-btn="true" name="username" id="username" value=""
+					<label for="UserEmail">Email</label> <input type="email"
+						data-clear-btn="true" name="data[User][email]" id="UserEmail" value=""
 						placeholder="Ingresar su Email" class="required email" />
 				</div>
 				<div data-role="fieldcontain">
-					<label for="password">Clave</label> <input type="password"
-						data-clear-btn="true" name="password" id="password" value=""
+					<label for="UserPassword">Clave</label> <input type="password"
+						data-clear-btn="true" name="data[User][password]" id="UserPassword" value=""
 						placeholder="Introduzca su Clave" class="required" />
 				</div>
 				<input type="submit" id="btn-ingresar" value="Ingresar" />
@@ -142,8 +143,8 @@
 						data-theme="b">Ayuda</a></li>
 					<li><a href="#configurar" id="pencil" data-icon="custom"
 						data-theme="b" data-ajax="false">Configurar</a></li>
-					<li><a href="#acerca" id="presentation" data-icon="custom"
-						data-theme="b">Acerca de</a></li>
+					<li><a href="#salir" id="run" data-icon="custom"
+						data-theme="b">Salir</a></li>
 				</ul>
 			</div>
 
@@ -203,8 +204,8 @@
 						data-theme="b">Ayuda</a></li>
 					<li><a href="#configurar" id="pencil" data-icon="custom"
 						data-theme="b" data-ajax="false">Configurar</a></li>
-					<li><a href="#acerca" id="presentation" data-icon="custom"
-						data-theme="b">Acerca de</a></li>
+					<li><a href="#salir" id="run" data-icon="custom"
+						data-theme="b">Salir</a></li>
 				</ul>
 			</div>
 
@@ -264,8 +265,8 @@
 						data-theme="b">Ayuda</a></li>
 					<li><a href="#configurar" id="pencil" data-icon="custom"
 						data-theme="b" data-ajax="false">Configurar</a></li>
-					<li><a href="#acerca" id="presentation" data-icon="custom"
-						data-theme="b">Acerca de</a></li>
+					<li><a href="#salir" id="run" data-icon="custom"
+						data-theme="b">Salir</a></li>
 				</ul>
 			</div>
 
@@ -310,7 +311,7 @@
 		</div>
 
 		<div data-role="content">
-			<form name="frm-registro" id="frm-registro" action="" method="post">
+			<form name="frm-registro" id="frm-registro" action="" method="post" data-ajax="false">
 				<div data-role="fieldcontain">
 					<label for="UserEmail">Email:</label> <input type="email" id="UserEmail"
 						name="data[User][email]" placeholder="Correo electrónico"
@@ -385,42 +386,121 @@
 						</div>
 					</div>
 				</div>
+				
+				<input type="hidden" id="UserId" name="data[User][id]" value="" />
 
 				<div data-role="fieldcontain">
-					<label for="email">Email:</label> <input type="email" id="email"
-						name="email" placeholder="Correo electrónico"
+					<label for="UserEmail">Email:</label> <input type="email" id="UserEmail"
+						name="data[User][email]" placeholder="Correo electrónico"
 						data-clear-btn="true" value="" class="required email" />
 				</div>
 
 				<div data-role="fieldcontain">
-					<label for="name">Primer nombre:</label> <input type="text"
-						id="name" name="name" placeholder="Introduzca su Nombre"
+					<label for="UserName">Primer nombre:</label> <input type="text"
+						id="UserName" name="data[User][name]" placeholder="Introduzca su Nombre"
 						data-clear-btn="true" value="" />
 				</div>
 
 				<div data-role="fieldcontain">
-					<label for="lastname">Primer apellido:</label> <input type="text"
-						id="lastname" name="lastname" placeholder="Indique su Apellido"
+					<label for="UserLastname">Primer apellido:</label> <input type="text"
+						id="UserLastname" name="data[User][lastname]" placeholder="Indique su Apellido"
 						data-clear-btn="true" value="" />
 				</div>
 
 				<div data-role="fieldcontain">
-					<label for="location">Ubicación:</label> <input type="text"
-						id="location" name="location" placeholder="Ciudad y país"
+					<label for="UserLocation">Ubicación:</label> <input type="text"
+						id="UserLocation" name="data[User][location]" placeholder="Ciudad y país"
 						data-clear-btn="true" value="" />
 				</div>
 
 				<div data-role="fieldcontain">
-					<label for="website">URL de su sitio web:</label> <input type="url"
-						id="website" name="website" placeholder="http://"
+					<label for="UserWebsite">URL de su sitio web:</label> <input type="url"
+						id="UserWebsite" name="data[User][website]" placeholder="http://"
 						data-clear-btn="true" value="" />
 				</div>
 
 				<input type="submit" id="btn-guardar-perfil" value="Guardar Cambios" />
 			</form>
 		</div>
+
+		<div data-role="footer">
+			<div data-role="navbar" class="custom-icons" data-grid="c">
+				<ul>
+					<li><a href="#clave" id="key" data-icon="custom"
+						data-theme="b" data-ajax="false">Clave</a></li>
+					<li><a href="#ayuda" id="sign" data-icon="custom"
+						data-theme="b">Ayuda</a></li>
+					<li><a href="#configurar" id="pencil" data-icon="custom"
+						data-theme="b" data-ajax="false">Configurar</a></li>
+					<li><a href="#salir" id="run" data-icon="custom"
+						data-theme="b">Salir</a></li>
+				</ul>
+			</div>
+
+		</div>
 	</div>
 	<!-- Page::Perfil END -->
+
+
+	<!-- Page::Clave -->
+	<div data-role="page" id="clave">
+		<div data-role="header" class="page-header">
+			<a href="#main" data-icon="arrow-l" data-iconpos="notext"
+				data-direction="reverse" data-rel="back" rel="external">Back</a>
+			<div class="logo"></div>
+			<a href="#principal" data-icon="home" data-iconpos="notext"
+				rel="external" class="ui-btn-right">Home</a>
+		</div>
+		<h2 class="pageTitle">
+			<span>Cambiar Clave</span>
+		</h2>
+		<div class="shadow1box">
+			<img src="images/shadow1.png" class="shadow1" alt="shadow">
+		</div>
+
+		<div data-role="content">
+			<form name="frm-clave" id="frm-clave" action="" method="post">
+				<input type="hidden" id="UserId" name="data[User][id]" value="" />
+
+				<div data-role="fieldcontain">
+					<label for="UserPasswordOld">Clave Anterior:</label> <input type="password" id="UserPasswordOld"
+						name="data[User][password_old]" placeholder="Clave anterior"
+						data-clear-btn="true" value="" class="required" />
+				</div>
+
+				<div data-role="fieldcontain">
+					<label for="UserPasswordNew">Clave Nueva:</label> <input type="password" id="UserPasswordNew"
+						name="data[User][password_new]" placeholder="Clave nueva"
+						data-clear-btn="true" value="" class="required" />
+				</div>
+
+				<div data-role="fieldcontain">
+					<label for="UserPasswordConfirm">Confirmar Clave:</label> <input type="password" id="UserPasswordConfirm"
+						name="data[User][password_confirm]" placeholder="Confirmar clave"
+						data-clear-btn="true" value="" class="required" />
+				</div>
+
+				<input type="submit" id="btn-guardar-perfil" value="Cambiar Clave" />
+			</form>
+		</div>
+
+		<div data-role="footer">
+			<div data-role="navbar" class="custom-icons" data-grid="c">
+				<ul>
+					<li><a href="#perfil" id="users" data-icon="custom"
+						data-theme="b" data-ajax="false">Perfil</a></li>
+					<li><a href="#ayuda" id="sign" data-icon="custom"
+						data-theme="b">Ayuda</a></li>
+					<li><a href="#configurar" id="pencil" data-icon="custom"
+						data-theme="b" data-ajax="false">Configurar</a></li>
+					<li><a href="#salir" id="run" data-icon="custom"
+						data-theme="b">Salir</a></li>
+				</ul>
+			</div>
+
+		</div>
+	</div>
+	<!-- Page::Clave END -->
 
 
 
@@ -458,9 +538,10 @@
 		<div data-role="content">
 			<form name="frm-configurar" id="frm-configurar" action=""
 				method="post">
+				<input type="hidden" id="UserId" name="data[User][id]" value="" />
 				<div data-role="fieldcontain">
-					<label for="show_nnews">Cantidad de noticias a mostrar:</label> <input
-						type="range" name="show_nnews" id="show_nnews" min="1" max="20"
+					<label for="SettingShowedNews">Cantidad de noticias a mostrar:</label> <input
+						type="range" name="data[Setting][showed_news]" id="SettingShowedNews" min="10" max="30"
 						class="required numeric" value="10" />
 				</div>
 				<div data-role="fieldcontain">
@@ -468,15 +549,7 @@
 						name="keyword" id="keyword" />
 				</div>
 				<div data-role="fieldcontain">
-					<fieldset data-role="controlgroup">
-						<label>Palabras Activas:</label> <input type="checkbox"
-							name="checkbox-v-2a" id="checkbox-v-2a" checked="checked">
-						<label for="checkbox-v-2a">One</label> <input type="checkbox"
-							name="checkbox-v-2b" id="checkbox-v-2b" checked="checked">
-						<label for="checkbox-v-2b">Two</label> <input type="checkbox"
-							name="checkbox-v-2c" id="checkbox-v-2c" checked="checked">
-						<label for="checkbox-v-2c">Three</label>
-					</fieldset>
+					<fieldset data-role="controlgroup" id="keywords-container"></fieldset>
 				</div>
 				<input type="submit" id="btn-guardar-configuracion"
 					value="Guardar Configuración" />
@@ -493,13 +566,45 @@
 						data-theme="b">Ayuda</a></li>
 					<li><a href="#configurar" id="pencil" data-icon="custom"
 						data-theme="b" data-ajax="false">Configurar</a></li>
-					<li><a href="#acerca" id="presentation" data-icon="custom"
-						data-theme="b">Acerca de</a></li>
+					<li><a href="#salir" id="run" data-icon="custom"
+						data-theme="b">Salir</a></li>
 				</ul>
 			</div>
 		</div>
 	</div>
 	<!-- Page::Configurar END -->
+
+
+
+	<!-- Page::Salir -->
+	<div data-role="page" id="salir">
+		<div data-role="header" class="page-header" data-add-back-btn="true">
+			<a href="#index" data-icon="arrow-l" data-iconpos="notext"
+				data-direction="reverse" data-rel="back" rel="external">Back</a>
+			<div class="logo"></div>
+			<a href="#principal" data-icon="home" data-iconpos="notext"
+				data-direction="reverse" rel="external" class="ui-btn-right">Home</a>
+		</div>
+
+		<h2 class="pageTitle">
+			<span>Salir</span>
+		</h2>
+		<div class="shadow1box">
+			<img src="images/shadow1.png" class="shadow1" alt="shadow">
+		</div>
+
+		<div data-role="content">
+			<form name="frm-salir" id="frm-salir" action=""
+				method="post">
+				<p>¿Está seguro(a) que desea salir?</p>
+				<input type="submit" id="btn-guardar-configuracion"
+					value="Si, estoy seguro(a)" />
+				<a href="#principal" data-direction="reverse" data-rel="back" rel="external" data-role="button">Volver</a>
+			</form>
+
+		</div>
+	</div>
+	<!-- Page::Salir END -->
 
 
 
