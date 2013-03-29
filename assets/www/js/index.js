@@ -20,9 +20,6 @@ var app = {
 	// Database Object
 	db: null,
 	
-	// Connected flag
-	connected: false,
-	
 	// Application Constructor
 	initialize : function() {
 		this.bindEvents();
@@ -633,7 +630,45 @@ var app = {
 	// Obteniendo las ultimas noticias
 	getLatestNews : function (news_container) {
 		params = '';
-		app.getNews(news_container, params);
+		if (navigator.connection.type == Connection.NONE) {
+			app.getLocalNews(news_container, params);
+		} else {
+			app.getNews(news_container, params);
+		}
+	},
+	
+	
+	// Obteniendo las noticias locales
+	getLocalNews: function (news_container, params) {
+		console.log("Loading local news...");
+		app.db.transaction(function (ctx) {
+			ctx.executeSql("select st.* from settings as st join users as u on u.id = st.user_id JOIN sessions as s on s.user_id = u.id LIMIT 1", [], function (tx, results) {
+				if (results.rows.length > 0) {
+					showed_news = results.rows.item(0).value;
+				}
+				tx.executeSql("SELECT id, title, link, resume FROM news ORDER BY id DESC LIMIT ?", [showed_news], function (tx, results) {
+					if (results.rows.length > 0) {
+						for(i=0; i < results.rows.length; i++) {
+							container = $("<li>").addClass("ui-btn-icon-right ui-li-has-arrow ui-li ui-li-static ui-body-c");
+							button = $("<div>").addClass("ui-btn-inner ui-li ui-li-static ui-body-c").attr("aria-hidden", true);
+							left = $("<div>").addClass("ui-btn-text");
+							arrow = $("<span>").addClass("ui-icon ui-icon-arrow-r ui-icon-shadow");
+							link = $("<a>").attr("href", "#ver-noticia").addClass("ui-link-inherit open-new").attr({"data-ajax": "false", "alt": results.rows.item(i).id});
+							title = $("<h3>").text(results.rows.item(i).title).addClass("ui-li-heading");
+							resume = $("<p>").text($(results.rows.item(i).resume).text()).addClass("ui-li-desc");
+							
+							$(link).append(title)
+							$(link).append(resume)
+							$(left).append(link)
+							$(button).append(left);
+							$(button).append(arrow);
+							$(container).append(button);
+							$(news_container).append(container);
+						}
+					}
+				}, function () {console.log("Error loading local news"); });
+			})
+		});
 	},
 	
 	// Obteniendo las ultimas noticias por keywords
@@ -682,6 +717,17 @@ var app = {
 							$(button).append(arrow);
 							$(container).append(button);
 							$(news_container).append(container);
+							
+							app.db.transaction(function (ctx) {
+								ctx.executeSql("SELECT * FROM news WHERE id = ?", [item.News.id], function (tx, results) {
+									if (results.rows.length < 1) {
+										console.log("Guardando " + item.News.id);
+										tx.executeSql("INSERT INTO news (id, title, link, resume, content) VALUES (?,?,?,?,?)", [item.News.id, item.News.title, item.News.link, item.News.resume, item.News.content], null, app.onErrorDB);
+									} else {
+										console.log(item.News.id + " Ya existe");
+									}
+								});
+							});
 						})
 					}
 				});
@@ -723,37 +769,6 @@ var app = {
 		tx.executeSql("CREATE TABLE IF NOT EXISTS settings (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, value TEXT, extra TEXT, user_id INTEGER)");
 		tx.executeSql("CREATE TABLE IF NOT EXISTS keywords (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT)");
 		tx.executeSql("CREATE TABLE IF NOT EXISTS users_keywords (id INTEGER PRIMARY KEY AUTOINCREMENT, user_id INTEGER, keyword_id INTEGER)");
-		
-		// TODO: Esto va en una funcion
-		//var url = "http://www.wlacruz.com.ve/p/news_api/news/getByKeywords";
-		//var news = [];
-		//$.ajax({
-		//	url: url,
-		//	dataType: 'jsonp',
-		//	timeout: 5000,
-		//	jsonpCallback: "callback",
-		//	async: false,
-		//	headers: {"Content-type":"text/javascript"},
-		//	success: function (data, status) {
-		//		$(data).each(function (i, item) {
-		//			news[i] = item;
-		//		})
-		//	}
-		//}).done(function () {
-		//	$(news).each(function (i, item) {
-		//		app.db.transaction(function (ctx) {
-		//			ctx.executeSql("SELECT * FROM news WHERE id = ?", [item.News.id], function (tx, results) {
-		//				if (results.rows.length < 1) {
-		//					console.log("Guardando " + item.News.id);
-		//					tx.executeSql("INSERT INTO news (id, title, link, resume) VALUES (?,?,?,?)", [item.News.id, item.News.title, item.News.link, item.News.resume], null, app.onErrorDB);
-		//				} else {
-		//					console.log(item.News.id + " Ya existe");
-		//				}
-		//			})
-		//			//ctx.executeSql("INSERT INTO news (id, title, link, resume) VALUES (?,?,?,?)", [item.News.id, item.News.title, item.News.link, item.News.resume], null, app.onErrorDB);
-		//		});
-		//	})
-		//});
 	},
 	
 	// MEtodo de conexion a la base de datos
