@@ -536,20 +536,19 @@
 		</div>
 
 		<div data-role="content">
+			<div class="padd"  data-role="fieldcontain">
+				<ul class="ui-listview" id="autocomplete" data-filter-theme="b" data-filter-placeholder="Agregar palabras claves..." data-filter="true" data-role="listview"></ul>
+			</div>
 			<form name="frm-configurar" id="frm-configurar" action=""
 				method="post">
 				<input type="hidden" id="UserId" name="data[User][id]" value="" />
 				<div data-role="fieldcontain">
+					<fieldset data-role="controlgroup" id="keywords-container"></fieldset>
+				</div>
+				<div data-role="fieldcontain">
 					<label for="SettingShowedNews">Cantidad de noticias a mostrar:</label> <input
 						type="range" name="data[Setting][showed_news]" id="SettingShowedNews" min="10" max="30"
 						class="required numeric" value="10" />
-				</div>
-				<div data-role="fieldcontain">
-					<label for="keyword">Palabra Clave:</label> <input type="text"
-						name="keyword" id="keyword" />
-				</div>
-				<div data-role="fieldcontain">
-					<fieldset data-role="controlgroup" id="keywords-container"></fieldset>
 				</div>
 				<input type="submit" id="btn-guardar-configuracion"
 					value="Guardar Configuración" />
@@ -573,7 +572,6 @@
 		</div>
 	</div>
 	<!-- Page::Configurar END -->
-
 
 
 	<!-- Page::Salir -->

@@ -95,7 +95,6 @@ var app = {
 			app.loadProfile();
 		});
 		$("#clave").live('pageshow', function(event) {
-			//$('#perfil .flexslider').flexslider(flexopts);
 			app.loadProfile();
 		});
 		$("#ayuda").live('pageshow', function(event) {
@@ -106,10 +105,12 @@ var app = {
 		});
 		$("#configurar").live('pageshow', function(event) {
 			$('#configurar .flexslider').flexslider(flexopts);
+			app.loadRemoteKeywords();
 			app.loadProfile();
-			app.loadKeywords();
+			app.loadLocalKeywords();
 			app.loadSettings();
 		});
+		
 		$("#todas").live('pageshow', function(event) {
 			$('#todas .flexslider').flexslider(flexopts);
 		});
@@ -474,14 +475,14 @@ var app = {
 	
 	
 	// Carga los keywords
-	loadKeywords: function () {
+	loadLocalKeywords: function () {
 		$("#keywords-container").empty();
 		app.db.transaction(function (ctx) {
-			ctx.executeSql("select k.* from keywords as k join users_keywords as uk on uk.keyword_id = k.id join users as u on u.id = uk.user_id JOIN sessions as s on s.user_id = u.id", [], function (tx, results) {
-				input = '<label>Palabras Activas:</label><input type="hidden" name="data[Keyword][Keyword]" value="" id="KeywordKeyword">';
+			ctx.executeSql("select s.user_id, k.* from keywords as k join users_keywords as uk on uk.keyword_id = k.id join users as u on u.id = uk.user_id JOIN sessions as s on s.user_id = u.id", [], function (tx, results) {
+				input = '<label>Mis Palabras Claves:</label><input type="hidden" name="data[Keyword][Keyword]" value="" id="KeywordKeyword">';
 				$("#keywords-container").append(input)
 				for (i = 0; i < results.rows.length; i++) {
-					checkbox = '<input type="checkbox" name="data[Keyword][Keyword][]" id="KeywordKeyword'+i+'" checked="checked"><label for="KeywordKeyword'+i+'">'+results.rows.item(i).name+'</label>';
+					checkbox = '<input type="checkbox" name="data[Keyword][Keyword][]" id="KeywordKeyword'+i+'" checked="checked" value="'+results.rows.item(i).id+'"onclick="app.removeKeyword(\''+results.rows.item(i).id+'\', \''+results.rows.item(i).user_id+'\')"><label for="KeywordKeyword'+i+'">'+results.rows.item(i).name+'</label>';
 					$("#keywords-container").append(checkbox);
 				}
 				$("#keywords-container").parent().trigger("create")
@@ -489,12 +490,84 @@ var app = {
 		});
 	},
 	
+	// Cargando keywords remotas
+	loadRemoteKeywords: function () {
+		console.log("Loagind...");
+		$(function() {
+			$( "#autocomplete" ).on( "listviewbeforefilter", function ( e, data ) {
+				var $ul = $( this ),
+					$input = $( data.input ),
+					value = $input.val(),
+					html = "";
+				$ul.html( "" );
+				if ( value && value.length > 1 ) {
+					$ul.html( "<li><div class='ui-loader'><span class='ui-icon ui-icon-loading'></span></div></li>" );
+					$ul.listview( "refresh" );
+					
+					var url = "http://www.wlacruz.com.ve/p/news_api/keywords/autocomplete";
+					//var url = "http://news/api/keywords/autocomplete";
+					$.ajax({
+						url: url,
+						dataType: "jsonp",
+						jsonpCallback: "callback",
+						crossDomain: true,
+						data: {
+							q: $input.val()
+						}
+					})
+					.then( function ( response ) {
+						$.each( response, function ( i, val ) {
+							html += '<li><a alt="'+i+'" onclick="app.addKeyword(\''+i+'\', \''+val+'\')">' + val + '</a></li>';
+						});
+						$ul.html( html );
+						$ul.listview( "refresh" );
+						$ul.trigger( "updatelayout");
+					});
+				}
+			});
+		});
+	},
+	
+	// Agregar palabra clave
+	addKeyword: function (id, name) {
+		app.db.transaction(function (ctx) {
+			ctx.executeSql("SELECT * FROM keywords WHERE id = ?", [id], function (tx, results) {
+				if (results.rows.length < 1) {
+					tx.executeSql("INSERT INTO keywords (id, name) VALUES (?, ?)", [id, name], function () { console.log("agregando keywords") }, function () { console.log("error agregando keywords") })
+				}
+			}, function () { console.log("error seleccionando keyword"); })
+			ctx.executeSql("SELECT id, user_id FROM sessions ORDER BY id DESC LIMIT 1", [], function (tx, results) {
+				user_id = results.rows.item(0).id;
+				tx.executeSql("SELECT * FROM users_keywords WHERE user_id = ? AND keyword_id = ?", [user_id, id], function (tx, results) {
+					if (results.rows.length < 1) {
+						tx.executeSql("INSERT INTO users_keywords (user_id, keyword_id) VALUES (?, ?)", [user_id, id], function () { console.log("agregando user keywords") }, function () { console.log("error agregando user keywords") })
+					}
+				}, function () { console.log("error seleccionando user keywords") })
+			})
+		});
+		// TODO: hacer la actualizacion en el servidor remoto
+		$( "#autocomplete" ).find("li a[alt="+id+"]").parents("li").remove();
+		$( "#autocomplete" ).listview( "refresh" );
+		app.loadLocalKeywords();
+	},
+	
+	// Remove keyword
+	removeKeyword: function (id, user_id) {
+		app.db.transaction(function (ctx) {
+			ctx.executeSql("DELETE FROM users_keywords WHERE keyword_id = ? AND user_id = ?", [id, user_id], function () { console.log("eliminando users keywords") }, function () { console.log("error eliminando users keywords") });
+			// TODO: hacer la eliminacion en el server
+		})
+		app.loadLocalKeywords();
+	},
+	
 	// Cargando la configuracion
 	loadSettings: function () {
 		app.db.transaction(function (ctx) {
 			ctx.executeSql("select st.* from settings as st join users as u on u.id = st.user_id JOIN sessions as s on s.user_id = u.id LIMIT 1", [], function (tx, results) {
-				showed_news = results.rows.item(0);
-				$("#SettingShowedNews").val(showed_news.value).trigger("change");
+				if (results.rows.length > 0) {
+					showed_news = results.rows.item(0);
+					$("#SettingShowedNews").val(showed_news.value).trigger("change");
+				}
 			})
 		});
 		
