@@ -123,9 +123,9 @@
 			<ul data-role="listview" data-inset="true" id="listview"
 				style="margin-bottom: 0px">
 
-				<li><a href="#todas" data-prefetch data-transition="flip" data-ajax="false">Todas
+				<li><a href="#todas" data-prefetch  data-ajax="false">Todas
 						las noticias</a></li>
-				<li><a href="#personalizadas" data-prefetch>Noticias
+				<li><a href="#personalizadas"  data-prefetch  data-ajax="false">Noticias
 						personalizadas</a></li>
 			</ul>
 
@@ -547,8 +547,8 @@
 				</div>
 				<div data-role="fieldcontain">
 					<label for="SettingShowedNews">Cantidad de noticias a mostrar:</label> <input
-						type="range" name="data[Setting][showed_news]" id="SettingShowedNews" min="10" max="30"
-						class="required numeric" value="10" />
+						type="range" name="data[Setting][showed_news]" id="SettingShowedNews" min="5" max="30"
+						class="required numeric ignore" value="5" />
 				</div>
 				<input type="submit" id="btn-guardar-configuracion"
 					value="Guardar Configuración" />

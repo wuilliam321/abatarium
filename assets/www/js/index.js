@@ -61,7 +61,7 @@ var app = {
 				app.getLatestNewsByKW("#custom-news");
 			});
 			$("a.open-new").live("click", function () {
-				app.getNew($(this).attr("alt"))
+				app.showNew($(this).attr("alt"))
 			})
 			
 			// Fix de los mensajes de alert
@@ -261,7 +261,8 @@ var app = {
 						required : 'Campo requerido',
 						numeric : "Debe ser entero"
 					}
-				}
+				},
+				ignore: ".ignore"
 			});
 
 			// Formulario para salir del sistema
@@ -332,9 +333,6 @@ var app = {
 	doExit: function () {
 		app.db.transaction(function (ctx) {
 			ctx.executeSql("DELETE FROM sessions");
-			ctx.executeSql("DELETE FROM settings");
-			ctx.executeSql("DELETE FROM keywords");
-			ctx.executeSql("DELETE FROM users_keywords");
 		});
 		$.mobile.changePage("index.html");
 	},
@@ -629,6 +627,7 @@ var app = {
 	
 	// Obteniendo las ultimas noticias
 	getLatestNews : function (news_container) {
+		$(news_container).empty();
 		params = '';
 		if (navigator.connection.type == Connection.NONE) {
 			app.getLocalNews(news_container, params);
@@ -640,13 +639,27 @@ var app = {
 	
 	// Obteniendo las noticias locales
 	getLocalNews: function (news_container, params) {
-		console.log("Loading local news...");
+		console.log("Loading local custom news...");
 		app.db.transaction(function (ctx) {
 			ctx.executeSql("select st.* from settings as st join users as u on u.id = st.user_id JOIN sessions as s on s.user_id = u.id LIMIT 1", [], function (tx, results) {
 				if (results.rows.length > 0) {
 					showed_news = results.rows.item(0).value;
 				}
-				tx.executeSql("SELECT id, title, link, resume FROM news ORDER BY id DESC LIMIT ?", [showed_news], function (tx, results) {
+				where = '';
+				aux = new Array();
+				for (i = 0; i < params.length; i++) {
+					aux.push("tags LIKE '%" + params[i] + "%'");
+					aux.push("content LIKE '%" + params[i] + "%'");
+					aux.push("title LIKE '%" + params[i] + "%'");
+					aux.push("resume LIKE '%" + params[i] + "%'");
+					aux.push("category_alias LIKE '%" + params[i] + "%'");
+					aux.push("link LIKE '%" + params[i] + "%'");
+					aux.push("author LIKE '%" + params[i] + "%'");
+				}
+				if (aux.length > 0) {
+					where = " WHERE " + aux.join(" OR ");
+				}
+				tx.executeSql("SELECT id, title, link, resume FROM news " + where + " ORDER BY id DESC LIMIT ?", [showed_news], function (tx, results) {
 					if (results.rows.length > 0) {
 						for(i=0; i < results.rows.length; i++) {
 							container = $("<li>").addClass("ui-btn-icon-right ui-li-has-arrow ui-li ui-li-static ui-body-c");
@@ -673,13 +686,19 @@ var app = {
 	
 	// Obteniendo las ultimas noticias por keywords
 	getLatestNewsByKW: function (news_container) {
+		$(news_container).empty();
 		app.db.transaction(function (ctx) {
 			var kws = new Array();
 			ctx.executeSql("select s.user_id, k.* from keywords as k join users_keywords as uk on uk.keyword_id = k.id join users as u on u.id = uk.user_id JOIN sessions as s on s.user_id = u.id", [], function (tx, results) {
 				for(i=0; i < results.rows.length; i++) {
 					kws.push(results.rows.item(i).name);
 				}
-				app.getNews(news_container, "/" + kws.join('/'));
+				
+				if (navigator.connection.type == Connection.NONE) {
+					app.getLocalNews(news_container, kws);
+				} else {
+					app.getNews(news_container, "/" + kws.join('/'));
+				}
 			})
 		});
 	},
@@ -722,7 +741,7 @@ var app = {
 								ctx.executeSql("SELECT * FROM news WHERE id = ?", [item.News.id], function (tx, results) {
 									if (results.rows.length < 1) {
 										console.log("Guardando " + item.News.id);
-										tx.executeSql("INSERT INTO news (id, title, link, resume, content) VALUES (?,?,?,?,?)", [item.News.id, item.News.title, item.News.link, item.News.resume, item.News.content], null, app.onErrorDB);
+										tx.executeSql("INSERT INTO news (id, title, link, resume, content, tags, category_alias, author) VALUES (?,?,?,?,?,?,?,?)", [item.News.id, item.News.title, item.News.link, item.News.resume, item.News.content, item.News.tags, item.News.category_alias, item.News.author], null, app.onErrorDB);
 									} else {
 										console.log(item.News.id + " Ya existe");
 									}
@@ -732,6 +751,28 @@ var app = {
 					}
 				});
 			})
+		});
+	},
+	
+	// Funcion para mostrar la noticia especifica
+	showNew: function (params) {
+		if (navigator.connection.type == Connection.NONE) {
+			app.getLocalNew(params);
+		} else {
+			app.getNew(params)
+		}
+	},
+	
+	// Obteniendo la noticia segun id localmente
+	getLocalNew: function (params) {
+		console.log("Loading local new id = " + params);
+		app.db.transaction(function (ctx) {
+			ctx.executeSql("SELECT title, content FROM news WHERE id = ?", [params], function (tx, results) {
+				if (results.rows.length > 0) {
+					$("#new-title").html(results.rows.item(0).title)
+					$("#new-content").html(results.rows.item(0).content)
+				}
+			}, function () {console.log("Error loading local new"); });
 		});
 	},
 	
