@@ -451,7 +451,6 @@ var app = {
 						break;
 					case 1:
 						navigator.notification.alert("Configuración actualizada con exito", null, "Éxito", "Continuar");
-						console.log(data.item);
 						app.db.transaction(function (tx) {
 							tx.executeSql("SELECT st.* FROM settings as st join users as u on u.id = st.user_id", [], function (ctx, results) {
 								if (results.rows.length > 0) {
@@ -492,7 +491,6 @@ var app = {
 	
 	// Cargando keywords remotas
 	loadRemoteKeywords: function () {
-		console.log("Loagind...");
 		$(function() {
 			$( "#autocomplete" ).on( "listviewbeforefilter", function ( e, data ) {
 				var $ul = $( this ),
@@ -537,7 +535,7 @@ var app = {
 				}
 			}, function () { console.log("error seleccionando keyword"); })
 			ctx.executeSql("SELECT id, user_id FROM sessions ORDER BY id DESC LIMIT 1", [], function (tx, results) {
-				user_id = results.rows.item(0).id;
+				user_id = results.rows.item(0).user_id;
 				tx.executeSql("SELECT * FROM users_keywords WHERE user_id = ? AND keyword_id = ?", [user_id, id], function (tx, results) {
 					if (results.rows.length < 1) {
 						tx.executeSql("INSERT INTO users_keywords (user_id, keyword_id) VALUES (?, ?)", [user_id, id], function () { console.log("agregando user keywords") }, function () { console.log("error agregando user keywords") })
@@ -545,7 +543,6 @@ var app = {
 				}, function () { console.log("error seleccionando user keywords") })
 			})
 		});
-		// TODO: hacer la actualizacion en el servidor remoto
 		$( "#autocomplete" ).find("li a[alt="+id+"]").parents("li").remove();
 		$( "#autocomplete" ).listview( "refresh" );
 		app.loadLocalKeywords();
@@ -555,7 +552,6 @@ var app = {
 	removeKeyword: function (id, user_id) {
 		app.db.transaction(function (ctx) {
 			ctx.executeSql("DELETE FROM users_keywords WHERE keyword_id = ? AND user_id = ?", [id, user_id], function () { console.log("eliminando users keywords") }, function () { console.log("error eliminando users keywords") });
-			// TODO: hacer la eliminacion en el server
 		})
 		app.loadLocalKeywords();
 	},
@@ -642,39 +638,54 @@ var app = {
 	
 	// Obteniendo las ultimas noticias por keywords
 	getLatestNewsByKW: function (news_container) {
-		params = '/chavez/capriles/maduro/venezuela/caracas'; // TODO: buscar las kw del usuario
-		app.getNews(news_container, params);
+		app.db.transaction(function (ctx) {
+			var kws = new Array();
+			ctx.executeSql("select s.user_id, k.* from keywords as k join users_keywords as uk on uk.keyword_id = k.id join users as u on u.id = uk.user_id JOIN sessions as s on s.user_id = u.id", [], function (tx, results) {
+				for(i=0; i < results.rows.length; i++) {
+					kws.push(results.rows.item(i).name);
+				}
+				app.getNews(news_container, "/" + kws.join('/'));
+			})
+		});
 	},
 	
 	// Obtenido las noticias
 	getNews: function (news_container, params) {
-		$(news_container).empty();
-		var url = "http://www.wlacruz.com.ve/p/news_api/news/getByKeywords" + params;
-		//var url = "http://news/api/news/getByKeywords" + params;
-		$.ajax({
-			url: url,
-			dataType: 'jsonp',
-			timeout: 5000,
-			jsonpCallback: "callback",
-			success: function (data, status) {
-				$(data).each(function (i, item) {
-					container = $("<li>").addClass("ui-btn-icon-right ui-li-has-arrow ui-li ui-li-static ui-body-c");
-					button = $("<div>").addClass("ui-btn-inner ui-li ui-li-static ui-body-c").attr("aria-hidden", true);
-					left = $("<div>").addClass("ui-btn-text");
-					arrow = $("<span>").addClass("ui-icon ui-icon-arrow-r ui-icon-shadow");
-					link = $("<a>").attr("href", "#ver-noticia").addClass("ui-link-inherit open-new").attr({"data-ajax": "false", "alt": item.News.id});
-					title = $("<h3>").text(item.News.title).addClass("ui-li-heading");
-					resume = $("<p>").text($(item.News.resume).text()).addClass("ui-li-desc");
-					
-					$(link).append(title)
-					$(link).append(resume)
-					$(left).append(link)
-					$(button).append(left);
-					$(button).append(arrow);
-					$(container).append(button);
-					$(news_container).append(container);
-				})
-			}
+		app.db.transaction(function (ctx) {
+			ctx.executeSql("select st.* from settings as st join users as u on u.id = st.user_id JOIN sessions as s on s.user_id = u.id LIMIT 1", [], function (tx, results) {
+				if (results.rows.length > 0) {
+					showed_news = results.rows.item(0).value;
+				}
+				$(news_container).empty();
+				var url = "http://www.wlacruz.com.ve/p/news_api/news/getByKeywords" + params;
+				//var url = "http://news/api/news/getByKeywords" + params;
+				$.ajax({
+					url: url,
+					dataType: 'jsonp',
+					data: {showed_news: showed_news},
+					timeout: 5000,
+					jsonpCallback: "callback",
+					success: function (data, status) {
+						$(data).each(function (i, item) {
+							container = $("<li>").addClass("ui-btn-icon-right ui-li-has-arrow ui-li ui-li-static ui-body-c");
+							button = $("<div>").addClass("ui-btn-inner ui-li ui-li-static ui-body-c").attr("aria-hidden", true);
+							left = $("<div>").addClass("ui-btn-text");
+							arrow = $("<span>").addClass("ui-icon ui-icon-arrow-r ui-icon-shadow");
+							link = $("<a>").attr("href", "#ver-noticia").addClass("ui-link-inherit open-new").attr({"data-ajax": "false", "alt": item.News.id});
+							title = $("<h3>").text(item.News.title).addClass("ui-li-heading");
+							resume = $("<p>").text($(item.News.resume).text()).addClass("ui-li-desc");
+							
+							$(link).append(title)
+							$(link).append(resume)
+							$(left).append(link)
+							$(button).append(left);
+							$(button).append(arrow);
+							$(container).append(button);
+							$(news_container).append(container);
+						})
+					}
+				});
+			})
 		});
 	},
 	
