@@ -284,8 +284,8 @@ var app = {
 	doLogin : function(username, password) {
 		$(function() {
 			var data = md5(username + password);
-			//var url = "http://www.wlacruz.com.ve/p/news_api/users/login";
-			var url = "http://news/api/users/login";
+			var url = "http://www.wlacruz.com.ve/p/news_api/users/login";
+			//var url = "http://news/api/users/login";
 			$.ajax({
 				url: url,
 				data: {"data[User][email]": username, q: data},
@@ -356,8 +356,8 @@ var app = {
 	// Guardando perfil
 	doSaveProfile : function(user) {
 		$(function() {
-			//var url = "http://www.wlacruz.com.ve/p/news_api/users/update";
-			var url = "http://news/api/users/update";
+			var url = "http://www.wlacruz.com.ve/p/news_api/users/update";
+			//var url = "http://news/api/users/update";
 			$.ajax({
 				url: url,
 				data: user,
@@ -388,8 +388,8 @@ var app = {
 	// Cambiar la clave
 	doChangePassword: function (user) {
 		$(function() {
-			//var url = "http://www.wlacruz.com.ve/p/news_api/users/password";
-			var url = "http://news/api/users/password";
+			var url = "http://www.wlacruz.com.ve/p/news_api/users/password";
+			//var url = "http://news/api/users/password";
 			$.ajax({
 				url: url,
 				data: user,
@@ -437,8 +437,8 @@ var app = {
 	// Guardando configuraciones
 	doSaveSettings : function(setting) {
 		$(function() {
-			//var url = "http://www.wlacruz.com.ve/p/news_api/settings/save";
-			var url = "http://news/api/settings/save";
+			var url = "http://www.wlacruz.com.ve/p/news_api/settings/save";
+			//var url = "http://news/api/settings/save";
 			$.ajax({
 				url: url,
 				data: setting,
@@ -504,8 +504,8 @@ var app = {
 	// Guardando nuevo usuario
 	doCreateUser : function(user) {
 		$(function() {
-			//var url = "http://www.wlacruz.com.ve/p/news_api/users/create";
-			var url = "http://news/api/users/create";
+			var url = "http://www.wlacruz.com.ve/p/news_api/users/create";
+			//var url = "http://news/api/users/create";
 			$.ajax({
 				url: url,
 				data: user,
