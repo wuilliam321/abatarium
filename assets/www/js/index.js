@@ -180,12 +180,11 @@ var app = {
 						inputs = $("#frm-recuperar").serializeArray()
 
 						// Guardando Perfil
-						app.doRecoverPassword();
-						$.mobile.changePage("index.html#main");
+						app.doRecoverPassword(inputs);
 					}
 				},
 				messages : {
-					email : {
+					"data[User][email]" : {
 						required : 'Email es un campo requerido',
 						email : "Debe ser un correo electrónico"
 					}
@@ -518,7 +517,7 @@ var app = {
 						break;
 					case 1:
 						navigator.notification.alert("Usuario creado con exito, enviamos su clave al correo", null, "Éxito", "Continuar");
-						$.mobile.changePage("index.html#main");
+						$.mobile.changePage("index.html");
 						break;
 					case 2:
 						navigator.notification.alert("Ocurrio algun problema, intente nuevamente", null, "Alerta", "Continuar");
@@ -534,9 +533,31 @@ var app = {
 	},
 
 	// Recuperando clave
-	doRecoverPassword : function() {
+	doRecoverPassword : function(user) {
 		$(function() {
-			// console.log("Recuperando clave");
+			var url = "http://www.wlacruz.com.ve/p/news_api/users/recovery";
+			//var url = "http://news/api/users/recovery";
+			$.ajax({
+				url: url,
+				data: user,
+				dataType: 'jsonp',
+				jsonpCallback: "callback",
+			}).done(function (data) {
+				switch (data.code) {
+					case 0:
+						navigator.notification.alert("No se pudo recuperar la clave, intente de nuevo", null, "Error!", "Continuar");
+						break;
+					case 1:
+						navigator.notification.alert("Clave reseteada, la enviamos a su correo", null, "Éxito", "Continuar");
+						$.mobile.changePage("index.html");
+						break;
+					case 2:
+						navigator.notification.alert("Ocurrio algun problema, intente nuevamente", null, "Alerta", "Continuar");
+						break;
+				}
+			}).error (function () {
+				navigator.notification.alert("Ocurrio algun problema inesperado, intente nuevamente", null, "Alerta", "Continuar");
+			});
 		})
 	},
 	
