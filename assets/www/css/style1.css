@@ -2181,3 +2181,6 @@ form label.error {
 #new-content {
 	text-align: justify;
 }
+div.custom-icons {
+	margin: 0;
+}

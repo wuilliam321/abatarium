@@ -20,6 +20,12 @@ var app = {
 	// Objeto de conexion a la base de datos
 	db: null,
 	
+	// Url de api del servidor
+	base_url: 'http://www.wlacruz.com.ve/p/news_api',
+	
+	// Url del api del servidor LOCAL
+	//base_url: 'http://news/api',
+	
 	// Constructor principal
 	initialize : function() {
 		this.bindEvents();
@@ -360,8 +366,7 @@ var app = {
 			$(function() {
 				// Construyendo un arreglo de seguridad
 				var data = md5(username + password);
-				var url = "http://www.wlacruz.com.ve/p/news_api/users/login";
-				//var url = "http://news/api/users/login";
+				var url = app.base_url + "/users/login";
 				$.ajax({
 					url: url,
 					data: {"data[User][email]": username, q: data},
@@ -455,8 +460,7 @@ var app = {
 			});
 		} else {
 			$(function() {
-				var url = "http://www.wlacruz.com.ve/p/news_api/users/update";
-				//var url = "http://news/api/users/update";
+				var url = app.base_url + "/users/update";
 				$.ajax({
 					url: url,
 					data: user,
@@ -491,8 +495,7 @@ var app = {
 	// Actualizar claves, solo si tiene conectividad
 	doChangePassword: function (user) {
 		$(function() {
-			var url = "http://www.wlacruz.com.ve/p/news_api/users/password";
-			//var url = "http://news/api/users/password";
+			var url = app.base_url + "/users/password";
 			$.ajax({
 				url: url,
 				data: user,
@@ -561,8 +564,7 @@ var app = {
 			});
 		} else {
 			$(function() {
-				var url = "http://www.wlacruz.com.ve/p/news_api/settings/save";
-				//var url = "http://news/api/settings/save";
+				var url = app.base_url + "/settings/save";
 				$.ajax({
 					url: url,
 					data: setting,
@@ -609,7 +611,7 @@ var app = {
 			// Buscando las KW del usuario en sesion
 			ctx.executeSql("select s.user_id, k.* from keywords as k join users_keywords as uk on uk.keyword_id = k.id join users as u on u.id = uk.user_id JOIN sessions as s on s.user_id = u.id", [], function (tx, results) {
 				// Texto de la cabecera del formulario
-				input = '<label>Mis Palabras Claves:</label><input type="hidden" name="data[Keyword][Keyword]" value="" id="KeywordKeyword">';
+				input = '<label>Mis Palabras Claves:</label><p><small>Tocar para eliminar la palabra clave</small></p><input type="hidden" name="data[Keyword][Keyword]" value="" id="KeywordKeyword">';
 				
 				// Si no hay conexion, no se permite eliminarlos ni agregar nuevos
 				disabled = '';
@@ -652,8 +654,7 @@ var app = {
 					$ul.listview( "refresh" );
 					
 					// Fuente de datos
-					var url = "http://www.wlacruz.com.ve/p/news_api/keywords/autocomplete";
-					//var url = "http://news/api/keywords/autocomplete";
+					var url = app.base_url + "/keywords/autocomplete";
 					$.ajax({
 						url: url,
 						dataType: "jsonp",
@@ -745,8 +746,7 @@ var app = {
 	// Guardando nuevo usuario
 	doCreateUser : function(user) {
 		$(function() {
-			var url = "http://www.wlacruz.com.ve/p/news_api/users/create";
-			//var url = "http://news/api/users/create";
+			var url = app.base_url + "/users/create";
 			$.ajax({
 				url: url,
 				data: user,
@@ -779,8 +779,7 @@ var app = {
 	// Recuperando clave
 	doRecoverPassword : function(user) {
 		$(function() {
-			var url = "http://www.wlacruz.com.ve/p/news_api/users/recovery";
-			//var url = "http://news/api/users/recovery";
+			var url = app.base_url + "/users/recovery";
 			$.ajax({
 				url: url,
 				data: user,
@@ -933,8 +932,7 @@ var app = {
 				$(news_container).empty();
 				
 				// Fuente de noticias
-				var url = "http://www.wlacruz.com.ve/p/news_api/news/getByKeywords" + params;
-				//var url = "http://news/api/news/getByKeywords" + params;
+				var url = app.base_url + "/news/getByKeywords" + params;
 				$.ajax({
 					url: url,
 					dataType: 'jsonp',
@@ -1029,8 +1027,7 @@ var app = {
 		$("#new-content").empty();
 		
 		// Fuente
-		var url = "http://www.wlacruz.com.ve/p/news_api/news/getById/" + params;
-		//var url = "http://news/api/news/getById/" + params;
+		var url = app.base_url + "/news/getById/" + params;
 		$.ajax({
 			url: url,
 			dataType: 'jsonp',
