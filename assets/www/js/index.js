@@ -51,6 +51,12 @@ var app = {
 	
 	// Eventos principales, conexion, sessiones, operaciones, fixes
 	mainEvent : function() {
+		// Quitando las animaciones entre paginas
+		$(document).bind('pageinit', function () {
+			$.mobile.defaultPageTransition = 'none';
+		});
+		
+		// Funcion principal
 		$(function() {
 			// Conectar a la BD
 			app.doConnect('newsdb', '1.0', 'News Database', 1000000);
