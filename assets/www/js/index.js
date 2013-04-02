@@ -106,6 +106,7 @@ var app = {
 		// Slider principal
 		$("#principal").live('pageshow', function(event) {
 			$('#principal .flexslider').flexslider(flexopts);
+			app.doSync();
 		});
 		
 		// Slider del perfil y carga del mismo
