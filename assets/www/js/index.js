@@ -58,6 +58,13 @@ var app = {
 		
 		// Funcion principal
 		$(function() {
+			// Loading messsage
+			$( document ).bind( 'mobileinit', function(){
+				$.mobile.loader.prototype.options.text = "Cargando...";
+				$.mobile.loader.prototype.options.textVisible = true;
+				$.mobile.loader.prototype.options.theme = "a";
+				$.mobile.loader.prototype.options.html = "";
+			});
 			// Conectar a la BD
 			app.doConnect('newsdb', '1.0', 'News Database', 1000000);
 
@@ -69,6 +76,14 @@ var app = {
 			
 			// Fix de los mensajes de alert
 			window.alert = navigator.notification.alert;
+			
+			// Sincronizando
+			app.doSync();
+			
+			// Intervalo de Sincronizacion
+			setInterval(function () {
+				app.doSync();
+			}, 2*60*1000)
 		})
 	},
 
@@ -125,6 +140,7 @@ var app = {
 		$("#configurar").live('pageshow', function(event) {
 			$('#configurar .flexslider').flexslider(flexopts);
 			// Si no hay conexion, no hay opcion de agregar nuevas KW
+			// TODO: Ver que si sea posible
 			if (navigator.connection.type == Connection.NONE) {
 				// Ocultando el autocomplete
 				$("#autocomplete").prev().hide();
@@ -147,24 +163,39 @@ var app = {
 		// Slider de todas las noticias y carga de las mismas
 		$("#todas").live('pageshow', function(event) {
 			$('#todas .flexslider').flexslider(flexopts);
-			app.getLatestNews("#all-news");
+			app.getLocalNews("#all-news", '');
 		});
 		
 		// Slider de todas las noticias personalizadas y carga de las mismas
 		$("#personalizadas").live('pageshow', function(event) {
 			$('#personalizadas .flexslider').flexslider(flexopts);
-			app.getLatestNewsByKW("#custom-news");
+			app.db.transaction(function (ctx) {
+				// Variable para contener las palabras claves del usuario
+				var kws = new Array();
+				
+				// Se buscan las palabras calves del usaurio activo
+				ctx.executeSql("select s.user_id, k.* from keywords as k join users_keywords as uk on uk.keyword_id = k.id join users as u on u.id = uk.user_id JOIN sessions as s on s.user_id = u.id", [], function (tx, results) {
+					for(i=0; i < results.rows.length; i++) {
+						// Se ingresan las KW en el arreglo
+						kws.push(results.rows.item(i).name);
+					}
+					
+					// Localmente se requiere el arreglo solamente
+					app.getLocalNews("#custom-news", kws);
+				})
+			});
 		});
 		
 		// Para cada noticia anterior, se abre con presionar
 		// sobre el enlace de la lista
 		$("a.open-new").live("click", function () {
-			app.showNew($(this).attr("alt"))
+			app.getLocalNew($(this).attr("alt"))
 		})
 		
 		// Slider del Registro
 		$("#registro").live('pageshow', function(event) {
 			$('#registro .flexslider').flexslider(flexopts);
+			// Usuarios solo pueden ser creados teniendo conexion
 			if (navigator.connection.type == Connection.NONE) {
 				navigator.notification.alert("Debe tener conexión para crear usuarios", null, "Error!", "Continuar");
 				$.mobile.changePage("index.html");
@@ -174,11 +205,42 @@ var app = {
 		// Slider de recuperacion de clave
 		$("#recuperar").live('pageshow', function(event) {
 			$('#recuperar .flexslider').flexslider(flexopts);
+			// Reinicio de clave solo si tiene conexion
 			if (navigator.connection.type == Connection.NONE) {
 				navigator.notification.alert("Debe tener conexión para reestablecer su clave", null, "Error!", "Continuar");
 				$.mobile.changePage("index.html");
 			}
 		});
+	},
+	
+	// Sync
+	doSync: function () {
+		// Si hay conexion TODO: recordar que aqui es la opcion que tendra en configuraciones para definir cuando actualizar
+		if (navigator.connection.type != Connection.NONE) {
+			console.log("Syncing...");
+			// Sincronizando todas las noticias
+			app.getNews("#all-news", '');
+			
+			// Sincronizando las noticias personalizadas
+			app.db.transaction(function (ctx) {
+				// Variable para contener las palabras claves del usuario
+				var kws = new Array();
+				
+				// Se buscan las palabras calves del usaurio activo
+				ctx.executeSql("select s.user_id, k.* from keywords as k join users_keywords as uk on uk.keyword_id = k.id join users as u on u.id = uk.user_id JOIN sessions as s on s.user_id = u.id", [], function (tx, results) {
+					for(i=0; i < results.rows.length; i++) {
+						// Se ingresan las KW en el arreglo
+						kws.push(results.rows.item(i).name);
+					}
+					// Remotamente necesito construir un texto (CakePHP Route Valid)
+					app.getNews("#custom-news", "/" + kws.join('/'));
+				})
+			});
+			
+			// TODO: subir datos de configuracion si cambiaron
+			// TODO: Subir datos del usuario si cambiaron
+			// TODO: Para los casos anteriores, meter campo changed=1 en las tablas
+		}
 	},
 	
 	// Validacion de formularios
@@ -374,6 +436,8 @@ var app = {
 				var data = md5(username + password);
 				var url = app.base_url + "/users/login";
 				$.ajax({
+					beforeSend: function() { $.mobile.showPageLoadingMsg(); },
+					complete: function() { $.mobile.hidePageLoadingMsg(); },
 					url: url,
 					data: {"data[User][email]": username, q: data},
 					dataType: 'jsonp',
@@ -455,6 +519,7 @@ var app = {
 	doSaveProfile : function(user) {
 		// Si no hay conexion, se almacena localmente el cambio, de lo contrario se hace directamente en el servidor
 		if (navigator.connection.type == Connection.NONE) {
+			// TODO: Esto si a aqui solamente, verificar que sea posible, boton changed ojo
 			console.log("Saving local profile");
 			app.db.transaction(function (tx) {
 				tx.executeSql("UPDATE users SET email = ?, name = ?, lastname = ?, latitude = ?, longitude = ?, location = ?, website = ? WHERE id = ?", [user[1].value, user[2].value, user[3].value, user[4].value, user[5].value, user[6].value, user[7].value, user[0].value], function() {
@@ -465,9 +530,12 @@ var app = {
 				});
 			});
 		} else {
+			// TODO: Esto va en el Sync
 			$(function() {
 				var url = app.base_url + "/users/update";
 				$.ajax({
+					beforeSend: function() { $.mobile.showPageLoadingMsg(); },
+					complete: function() { $.mobile.hidePageLoadingMsg(); },
 					url: url,
 					data: user,
 					dataType: 'jsonp',
@@ -503,6 +571,8 @@ var app = {
 		$(function() {
 			var url = app.base_url + "/users/password";
 			$.ajax({
+				beforeSend: function() { $.mobile.showPageLoadingMsg(); },
+				complete: function() { $.mobile.hidePageLoadingMsg(); },
 				url: url,
 				data: user,
 				dataType: 'jsonp',
@@ -556,6 +626,7 @@ var app = {
 	doSaveSettings : function(setting) {
 		// Si no hay conectividad se guardan localmente, de lo contrario se guardan tambien en el servidor
 		if (navigator.connection.type == Connection.NONE) {
+			// TODO: Esto sera lo unico de esta seccion Verificar que sea posible
 			console.log("Saving local settings");
 			app.db.transaction(function (tx) {
 				// Actualizando el valor donde el usuario sea el que esta conectado
@@ -569,9 +640,12 @@ var app = {
 				});
 			});
 		} else {
+			// TODO: esto ira en el Sync
 			$(function() {
 				var url = app.base_url + "/settings/save";
 				$.ajax({
+					beforeSend: function() { $.mobile.showPageLoadingMsg(); },
+					complete: function() { $.mobile.hidePageLoadingMsg(); },
 					url: url,
 					data: setting,
 					dataType: 'jsonp',
@@ -621,6 +695,7 @@ var app = {
 				
 				// Si no hay conexion, no se permite eliminarlos ni agregar nuevos
 				disabled = '';
+				// TODO: Verificar que si sea posible guardar palabras claves nuevas
 				if (navigator.connection.type == Connection.NONE) {
 					disabled = 'disabled="disabled"';
 					input += "<p><small>Para cambiar sus palabras claves debe habilitar la conectividad</small></p>";
@@ -662,6 +737,8 @@ var app = {
 					// Fuente de datos
 					var url = app.base_url + "/keywords/autocomplete";
 					$.ajax({
+						beforeSend: function() { $.mobile.showPageLoadingMsg(); },
+						complete: function() { $.mobile.hidePageLoadingMsg(); },
 						url: url,
 						dataType: "jsonp",
 						jsonpCallback: "callback",
@@ -754,6 +831,8 @@ var app = {
 		$(function() {
 			var url = app.base_url + "/users/create";
 			$.ajax({
+				beforeSend: function() { $.mobile.showPageLoadingMsg(); },
+				complete: function() { $.mobile.hidePageLoadingMsg(); },
 				url: url,
 				data: user,
 				dataType: 'jsonp',
@@ -787,6 +866,8 @@ var app = {
 		$(function() {
 			var url = app.base_url + "/users/recovery";
 			$.ajax({
+				beforeSend: function() { $.mobile.showPageLoadingMsg(); },
+				complete: function() { $.mobile.hidePageLoadingMsg(); },
 				url: url,
 				data: user,
 				dataType: 'jsonp',
@@ -813,21 +894,24 @@ var app = {
 	},
 	
 	// Intermediario para obtener las noticias
-	getLatestNews : function (news_container) {
-		$(news_container).empty();
-		params = '';
-		// Si hay conexion devuelve las noticias del servidor de lo contrario, las locales
-		if (navigator.connection.type == Connection.NONE) {
-			app.getLocalNews(news_container, params);
-		} else {
-			app.getNews(news_container, params);
-		}
-	},
+	//getLatestNews : function (news_container) {
+	//	$(news_container).empty();
+	//	params = '';
+	//	// Si hay conexion devuelve las noticias del servidor de lo contrario, las locales
+	//	if (navigator.connection.type == Connection.NONE) {
+	//		app.getLocalNews(news_container, params);
+	//	} else {
+	//		app.getNews(news_container, params);
+	//	}
+	//},
 	
 	
 	// Obteniendo las noticias locales
 	getLocalNews: function (news_container, params) {
 		console.log("Loading local custom news...");
+		// Limpiando el contenedor
+		$(news_container).empty();
+		// TODO: Abrir el loading fancy
 		app.db.transaction(function (ctx) {
 			// Seleccionando las configuraciones para determinar el numero de noticias a mostrar
 			ctx.executeSql("select st.* from settings as st join users as u on u.id = st.user_id JOIN sessions as s on s.user_id = u.id LIMIT 1", [], function (tx, results) {
@@ -838,21 +922,21 @@ var app = {
 				// Texto condicional, se construye de acuerdo al keyword en parametros
 				where = '';
 				
-				// Auxiliar para la construccion de un sql bien formado
-				aux = new Array();
-				for (i = 0; i < params.length; i++) {
-					// Condiciones de busqueda
-					aux.push("tags LIKE '%" + params[i] + "%'");
-					aux.push("content LIKE '%" + params[i] + "%'");
-					aux.push("title LIKE '%" + params[i] + "%'");
-					aux.push("resume LIKE '%" + params[i] + "%'");
-					aux.push("category_alias LIKE '%" + params[i] + "%'");
-					aux.push("link LIKE '%" + params[i] + "%'");
-					aux.push("author LIKE '%" + params[i] + "%'");
-				}
-				
-				// Si hay aux, es porqe hay parametros para los KW y se construye el WHERE SQL
-				if (aux.length > 0) {
+				// Si hay parametros se construye la clausula where
+				if (params.length) {
+					// Auxiliar para la construccion de un sql bien formado
+					aux = new Array();
+					for (i = 0; i < params.length; i++) {
+						console.log("Param: " + params[i]);
+						// Condiciones de busqueda
+						aux.push("tags LIKE '%" + params[i] + "%'");
+						aux.push("content LIKE '%" + params[i] + "%'");
+						aux.push("title LIKE '%" + params[i] + "%'");
+						aux.push("resume LIKE '%" + params[i] + "%'");
+						aux.push("category_alias LIKE '%" + params[i] + "%'");
+						aux.push("link LIKE '%" + params[i] + "%'");
+						aux.push("author LIKE '%" + params[i] + "%'");
+					}
 					where = " WHERE " + aux.join(" OR ");
 				}
 				
@@ -861,6 +945,7 @@ var app = {
 					// Si hay noticias se construye el list view con ellas
 					if (results.rows.length > 0) {
 						for(i=0; i < results.rows.length; i++) {
+							console.log("Loading new: " + results.rows.item(i).id);
 							// Contenedor de noticias
 							container = $("<li>").addClass("ui-btn-icon-right ui-li-has-arrow ui-li ui-li-static ui-body-c");
 							
@@ -899,30 +984,30 @@ var app = {
 	},
 	
 	// Obteniendo las ultimas noticias por keywords
-	getLatestNewsByKW: function (news_container) {
-		$(news_container).empty();
-		app.db.transaction(function (ctx) {
-			// Variable para contener las palabras claves del usuario
-			var kws = new Array();
-			
-			// Se buscan las palabras calves del usaurio activo
-			ctx.executeSql("select s.user_id, k.* from keywords as k join users_keywords as uk on uk.keyword_id = k.id join users as u on u.id = uk.user_id JOIN sessions as s on s.user_id = u.id", [], function (tx, results) {
-				for(i=0; i < results.rows.length; i++) {
-					// Se ingresan las KW en el arreglo
-					kws.push(results.rows.item(i).name);
-				}
-				
-				// Si no hay conectividad se buscan noticias de forma local, de lo contrario, las remotas
-				if (navigator.connection.type == Connection.NONE) {
-					// Localmente se requiere el arreglo solamente
-					app.getLocalNews(news_container, kws);
-				} else {
-					// Remotamente necesito construir un texto (CakePHP Route Valid)
-					app.getNews(news_container, "/" + kws.join('/'));
-				}
-			})
-		});
-	},
+	//getLatestNewsByKW: function (news_container) {
+	//	$(news_container).empty();
+	//	app.db.transaction(function (ctx) {
+	//		// Variable para contener las palabras claves del usuario
+	//		var kws = new Array();
+	//		
+	//		// Se buscan las palabras calves del usaurio activo
+	//		ctx.executeSql("select s.user_id, k.* from keywords as k join users_keywords as uk on uk.keyword_id = k.id join users as u on u.id = uk.user_id JOIN sessions as s on s.user_id = u.id", [], function (tx, results) {
+	//			for(i=0; i < results.rows.length; i++) {
+	//				// Se ingresan las KW en el arreglo
+	//				kws.push(results.rows.item(i).name);
+	//			}
+	//			
+	//			// Si no hay conectividad se buscan noticias de forma local, de lo contrario, las remotas
+	//			if (navigator.connection.type == Connection.NONE) {
+	//				// Localmente se requiere el arreglo solamente
+	//				app.getLocalNews(news_container, kws);
+	//			} else {
+	//				// Remotamente necesito construir un texto (CakePHP Route Valid)
+	//				app.getNews(news_container, "/" + kws.join('/'));
+	//			}
+	//		})
+	//	});
+	//},
 	
 	// Obtenido las noticias
 	getNews: function (news_container, params) {
@@ -940,6 +1025,8 @@ var app = {
 				// Fuente de noticias
 				var url = app.base_url + "/news/getByKeywords" + params;
 				$.ajax({
+					beforeSend: function() { $.mobile.showPageLoadingMsg(); },
+					complete: function() { $.mobile.hidePageLoadingMsg(); },
 					url: url,
 					dataType: 'jsonp',
 					data: {showed_news: showed_news},
@@ -998,14 +1085,14 @@ var app = {
 	},
 	
 	// Intermediario para mostrar la noticia, local o remotamente
-	showNew: function (params) {
-		// Si no hay conexion se busca localmente, de lo contrario, remotamente
-		if (navigator.connection.type == Connection.NONE) {
-			app.getLocalNew(params);
-		} else {
-			app.getNew(params)
-		}
-	},
+	//showNew: function (params) {
+	//	// Si no hay conexion se busca localmente, de lo contrario, remotamente
+	//	if (navigator.connection.type == Connection.NONE) {
+	//		app.getLocalNew(params);
+	//	} else {
+	//		app.getNew(params)
+	//	}
+	//},
 	
 	// Obteniendo la noticia segun id localmente
 	getLocalNew: function (params) {
@@ -1027,25 +1114,25 @@ var app = {
 	},
 	
 	// Obtenido la noticia segun id
-	getNew: function (params) {
-		// Limpiando los contenedores
-		$("#new-title").empty();
-		$("#new-content").empty();
-		
-		// Fuente
-		var url = app.base_url + "/news/getById/" + params;
-		$.ajax({
-			url: url,
-			dataType: 'jsonp',
-			timeout: 5000,
-			jsonpCallback: "callback",
-			success: function (item, status) {
-				// Estbaleceiendo los valores en los contenedores
-				$("#new-title").html(item.News.title)
-				$("#new-content").html(item.News.content)
-			}
-		});
-	},
+	//getNew: function (params) {
+	//	// Limpiando los contenedores
+	//	$("#new-title").empty();
+	//	$("#new-content").empty();
+	//	
+	//	// Fuente
+	//	var url = app.base_url + "/news/getById/" + params;
+	//	$.ajax({
+	//		url: url,
+	//		dataType: 'jsonp',
+	//		timeout: 5000,
+	//		jsonpCallback: "callback",
+	//		success: function (item, status) {
+	//			// Estbaleceiendo los valores en los contenedores
+	//			$("#new-title").html(item.News.title)
+	//			$("#new-content").html(item.News.content)
+	//		}
+	//	});
+	//},
 	
 	
 	// En caso de error ejecutando una transaccion u operacion
