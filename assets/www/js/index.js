@@ -58,13 +58,6 @@ var app = {
 		
 		// Funcion principal
 		$(function() {
-			// Loading messsage
-			$( document ).bind( 'mobileinit', function(){
-				$.mobile.loader.prototype.options.text = "Cargando...";
-				$.mobile.loader.prototype.options.textVisible = true;
-				$.mobile.loader.prototype.options.theme = "a";
-				$.mobile.loader.prototype.options.html = "";
-			});
 			// Conectar a la BD
 			app.doConnect('newsdb', '1.0', 'News Database', 1000000);
 
@@ -107,6 +100,7 @@ var app = {
 		$("#principal").live('pageshow', function(event) {
 			$('#principal .flexslider').flexslider(flexopts);
 			app.doSync();
+			app.doCheckNewUser();
 		});
 		
 		// Slider del perfil y carga del mismo
@@ -515,11 +509,25 @@ var app = {
 			}, app.onErrorDB)
 		});
 	},
+	
+	// Comprobando si es un usuario nuevo
+	doCheckNewUser: function () {
+		app.db.transaction(function (ctx) {
+			// Se busca una session activa
+			ctx.executeSql("SELECT u.is_new FROM sessions as s JOIN users as u ON u.id = s.user_id WHERE u.is_new = ? ORDER BY s.id DESC LIMIT 1", [1], function (tx, results) {
+				// Si hay sesion se redirecciona a principal
+				if (results.rows.length > 0) {
+					$.mobile.changePage("index.html#configurar");
+					navigator.notification.alert("Felicidades! Para empezar, configure Abatarium!", null, "Genial!", "Continuar");
+				}
+			}, app.onErrorDB)
+		});
+	},
 
 	// Guardando perfil
 	doSaveProfile : function(user) {
 		// Si no hay conexion, se almacena localmente el cambio, de lo contrario se hace directamente en el servidor
-		if (navigator.connection.type == Connection.NONE) {
+		//if (navigator.connection.type == Connection.NONE) {
 			// TODO: Esto si a aqui solamente, verificar que sea posible, boton changed ojo
 			console.log("Saving local profile");
 			app.db.transaction(function (tx) {
@@ -530,40 +538,40 @@ var app = {
 					navigator.notification.alert("Usuario no pudo ser actualizado, intente de nuevo", null, "Error!", "Continuar");
 				});
 			});
-		} else {
-			// TODO: Esto va en el Sync
-			$(function() {
-				var url = app.base_url + "/users/update";
-				$.ajax({
-					beforeSend: function() { $.mobile.showPageLoadingMsg(); },
-					complete: function() { $.mobile.hidePageLoadingMsg(); },
-					url: url,
-					data: user,
-					dataType: 'jsonp',
-					jsonpCallback: "callback",
-				}).done(function (data) {
-					// mensajes de feedback
-					switch (data.code) {
-						case 0:
-							navigator.notification.alert("Usuario no pudo ser actualizado, intente de nuevo", null, "Error!", "Continuar");
-							break;
-						case 1:
-							navigator.notification.alert("Usuario actualizado con exito", null, "Éxito", "Continuar");
-							app.db.transaction(function (tx) {
-								tx.executeSql("UPDATE users SET id = ?, email = ?, password = ?, is_new = ?, name = ?, lastname = ?, latitude = ?, longitude = ?, location = ?, website = ? WHERE id = ?", [data.item.User.id, data.item.User.email, data.item.User.password, data.item.User.is_new, data.item.User.name, data.item.User.lastname, data.item.User.latitude, data.item.User.longitude, data.item.User.location, data.item.User.website, data.item.User.id], function() {console.log("actualizando usuario")}, function () {console.log("error actualizando usuario")});
-							})
-							$.mobile.changePage("index.html#principal");
-							break;
-						case 2:
-							navigator.notification.alert("Ocurrio algun problema, intente nuevamente", null, "Alerta", "Continuar");
-							break;
-					}
-				}).error (function () {
-					// En caso de error
-					navigator.notification.alert("Ocurrio algun problema inesperado, intente nuevamente", null, "Alerta", "Continuar");
-				});
-			})
-		}
+		//} else {
+		//	// TODO: Esto va en el Sync
+		//	$(function() {
+		//		var url = app.base_url + "/users/update";
+		//		$.ajax({
+		//			beforeSend: function() { $.mobile.showPageLoadingMsg(); },
+		//			complete: function() { $.mobile.hidePageLoadingMsg(); },
+		//			url: url,
+		//			data: user,
+		//			dataType: 'jsonp',
+		//			jsonpCallback: "callback",
+		//		}).done(function (data) {
+		//			// mensajes de feedback
+		//			switch (data.code) {
+		//				case 0:
+		//					navigator.notification.alert("Usuario no pudo ser actualizado, intente de nuevo", null, "Error!", "Continuar");
+		//					break;
+		//				case 1:
+		//					navigator.notification.alert("Usuario actualizado con exito", null, "Éxito", "Continuar");
+		//					app.db.transaction(function (tx) {
+		//						tx.executeSql("UPDATE users SET id = ?, email = ?, password = ?, is_new = ?, name = ?, lastname = ?, latitude = ?, longitude = ?, location = ?, website = ? WHERE id = ?", [data.item.User.id, data.item.User.email, data.item.User.password, data.item.User.is_new, data.item.User.name, data.item.User.lastname, data.item.User.latitude, data.item.User.longitude, data.item.User.location, data.item.User.website, data.item.User.id], function() {console.log("actualizando usuario")}, function () {console.log("error actualizando usuario")});
+		//					})
+		//					$.mobile.changePage("index.html#principal");
+		//					break;
+		//				case 2:
+		//					navigator.notification.alert("Ocurrio algun problema, intente nuevamente", null, "Alerta", "Continuar");
+		//					break;
+		//			}
+		//		}).error (function () {
+		//			// En caso de error
+		//			navigator.notification.alert("Ocurrio algun problema inesperado, intente nuevamente", null, "Alerta", "Continuar");
+		//		});
+		//	})
+		//}
 	},
 	
 	
@@ -626,12 +634,13 @@ var app = {
 	// Guardando configuraciones
 	doSaveSettings : function(setting) {
 		// Si no hay conectividad se guardan localmente, de lo contrario se guardan tambien en el servidor
-		if (navigator.connection.type == Connection.NONE) {
+		//if (navigator.connection.type == Connection.NONE) {
 			// TODO: Esto sera lo unico de esta seccion Verificar que sea posible
 			console.log("Saving local settings");
+			console.log(setting[setting.length - 1].value);
 			app.db.transaction(function (tx) {
 				// Actualizando el valor donde el usuario sea el que esta conectado
-				tx.executeSql("UPDATE settings SET value = ? WHERE user_id = ?", [setting[2].value, setting[0].value], function() {
+				tx.executeSql("UPDATE settings SET value = ? WHERE user_id = ?", [setting[setting.length - 1].value, setting[0].value], function() {
 					// Mensajes de feedback
 					navigator.notification.alert("Configuración actualizada con exito", null, "Éxito", "Continuar");
 					$.mobile.changePage("index.html#principal");
@@ -639,48 +648,50 @@ var app = {
 					// En caso de error
 					navigator.notification.alert("La configuración no pudo ser guardada, intente de nuevo", null, "Error!", "Continuar");
 				});
+				// Actualizando al usuario para que ya no sea un usuario nuevo
+				tx.executeSql("UPDATE users SET is_new = ? WHERE id = ?", [0, setting[0].value], function() { console.log("Usuario no es nuevo ya") }, function () { console.log("No se pudo hacer viejo al usuario") });
 			});
-		} else {
-			// TODO: esto ira en el Sync
-			$(function() {
-				var url = app.base_url + "/settings/save";
-				$.ajax({
-					beforeSend: function() { $.mobile.showPageLoadingMsg(); },
-					complete: function() { $.mobile.hidePageLoadingMsg(); },
-					url: url,
-					data: setting,
-					dataType: 'jsonp',
-					jsonpCallback: "callback",
-				}).done(function (data) {
-					// Mensajes de feedback
-					switch (data.code) {
-						case 0:
-							navigator.notification.alert("La configuración no pudo ser guardada, intente de nuevo", null, "Error!", "Continuar");
-							break;
-						case 1:
-							navigator.notification.alert("Configuración actualizada con exito", null, "Éxito", "Continuar");
-							app.db.transaction(function (tx) {
-								// Si ingresan, o actualizan las configuraciones
-								tx.executeSql("SELECT st.* FROM settings as st join users as u on u.id = st.user_id", [], function (ctx, results) {
-									if (results.rows.length > 0) {
-										tx.executeSql("UPDATE settings SET value = ? WHERE id = ?", [data.item.Setting.value, data.item.Setting.id], function() {console.log("actualizando configuraciones")}, function () {console.log("error actualizando configuraciones")});
-									} else {
-										tx.executeSql("INSERT INTO settings (id, name, value,user_id) values (?, showed_news, ?, ?)", [data.item.Setting.id, data.item.Setting.value, data.item.Setting.user_id], function() {console.log("guardando configuraciones")}, function () {console.log("error guardando configuraciones")});
-									}
-								});
-							})
-							$.mobile.changePage("index.html#principal");
-							break;
-						case 2:
-							navigator.notification.alert("Ocurrio algun problema, intente nuevamente", null, "Alerta", "Continuar");
-							break;
-					}
-				}).error (function () {
-					// En caso de error
-					navigator.notification.alert("Ocurrio algun problema inesperado, intente nuevamente", null, "Alerta", "Continuar");
-				});
-			})
-		}
+		//} else {
+		//	// TODO: esto ira en el Sync
+		//	$(function() {
+		//		var url = app.base_url + "/settings/save";
+		//		$.ajax({
+		//			beforeSend: function() { $.mobile.showPageLoadingMsg(); },
+		//			complete: function() { $.mobile.hidePageLoadingMsg(); },
+		//			url: url,
+		//			data: setting,
+		//			dataType: 'jsonp',
+		//			jsonpCallback: "callback",
+		//		}).done(function (data) {
+		//			// Mensajes de feedback
+		//			switch (data.code) {
+		//				case 0:
+		//					navigator.notification.alert("La configuración no pudo ser guardada, intente de nuevo", null, "Error!", "Continuar");
+		//					break;
+		//				case 1:
+		//					navigator.notification.alert("Configuración actualizada con exito", null, "Éxito", "Continuar");
+		//					app.db.transaction(function (tx) {
+		//						// Si ingresan, o actualizan las configuraciones
+		//						tx.executeSql("SELECT st.* FROM settings as st join users as u on u.id = st.user_id", [], function (ctx, results) {
+		//							if (results.rows.length > 0) {
+		//								tx.executeSql("UPDATE settings SET value = ? WHERE id = ?", [data.item.Setting.value, data.item.Setting.id], function() {console.log("actualizando configuraciones")}, function () {console.log("error actualizando configuraciones")});
+		//							} else {
+		//								tx.executeSql("INSERT INTO settings (id, name, value,user_id) values (?, showed_news, ?, ?)", [data.item.Setting.id, data.item.Setting.value, data.item.Setting.user_id], function() {console.log("guardando configuraciones")}, function () {console.log("error guardando configuraciones")});
+		//							}
+		//						});
+		//					})
+		//					$.mobile.changePage("index.html#principal");
+		//					break;
+		//				case 2:
+		//					navigator.notification.alert("Ocurrio algun problema, intente nuevamente", null, "Alerta", "Continuar");
+		//					break;
+		//			}
+		//		}).error (function () {
+		//			// En caso de error
+		//			navigator.notification.alert("Ocurrio algun problema inesperado, intente nuevamente", null, "Alerta", "Continuar");
+		//		});
+		//	})
+		//}
 	},
 	
 	
