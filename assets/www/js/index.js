@@ -155,7 +155,7 @@ var app = {
 		// Slider de todas las noticias y carga de las mismas
 		$("#todas").live('pageshow', function(event) {
 			$('#todas .flexslider').flexslider(flexopts);
-			app.getLocalNews("#all-news", '');
+			app.getLocalNews("#all-news", '', "#todas #n-page");
 		});
 		
 		// Slider de todas las noticias personalizadas y carga de las mismas
@@ -173,7 +173,7 @@ var app = {
 					}
 					
 					// Localmente se requiere el arreglo solamente
-					app.getLocalNews("#custom-news", kws);
+					app.getLocalNews("#custom-news", kws, "#personalizadas #n-page");
 				})
 			});
 		});
@@ -934,7 +934,12 @@ var app = {
 	
 	
 	// Obteniendo las noticias locales
-	getLocalNews: function (news_container, params) {
+	getLocalNews: function (news_container, params, page) {
+		if (page) {
+			page = parseInt($(page).val());
+		} else {
+			page = 1;
+		}
 		console.log("Loading local custom news...");
 		// Limpiando el contenedor
 		$(news_container).empty();
@@ -945,6 +950,7 @@ var app = {
 				if (results.rows.length > 0) {
 					// capturando el numero de noticias a mostrar
 					showed_news = results.rows.item(0).value;
+					showed_news = parseInt(showed_news);
 				}
 				// Texto condicional, se construye de acuerdo al keyword en parametros
 				where = '';
@@ -966,9 +972,11 @@ var app = {
 					}
 					where = " WHERE " + aux.join(" OR ");
 				}
-				
+				min = (page * showed_news) - showed_news
+				max = page * showed_news
+				console.log('SELECT id, title, link, resume, is_new FROM news ' + where + ' ORDER BY id DESC LIMIT '+max+', '+showed_news);
 				// Buscando las noticicas
-				tx.executeSql("SELECT id, title, link, resume, is_new FROM news " + where + " ORDER BY id DESC LIMIT ?", [showed_news], function (tx, results) {
+				tx.executeSql("SELECT id, title, link, resume, is_new FROM news " + where + " ORDER BY id DESC LIMIT ?, ?", [max, showed_news], function (tx, results) {
 					// Si hay noticias se construye el list view con ellas
 					if (results.rows.length > 0) {
 						for(i=0; i < results.rows.length; i++) {
@@ -1011,6 +1019,23 @@ var app = {
 				}, function () {console.log("Error loading local news"); });
 			})
 		});
+	},
+	// TODO: comentarios de las funciones, y desactivar el "Anterior" si no hay anteriores
+	goNextNews: function (container) {
+		i = parseInt($(container + " #n-page").val()) + 1;
+		$(container + " #n-page").val(i);
+		$(container + "ul.ui-listview").empty().trigger("pageshow")
+		$(container).trigger("pageshow")
+	},
+	
+	goPrevNews: function (container) {
+		i = parseInt($(container + " #n-page").val()) - 1;
+		if (i < 0) {
+			i = 0;
+		}
+		$(container + " #n-page").val(i);
+		$(container + "ul.ui-listview").empty().trigger("pageshow")
+		$(container).trigger("pageshow")
 	},
 	
 	// Obteniendo las ultimas noticias por keywords
@@ -1121,6 +1146,37 @@ var app = {
 		});
 	},
 	
+	doMark: function (target) {
+		$("a.do-mark").each(function () {
+			$(this).attr("alt", target);
+		});
+	},
+	
+	doMarkUnreaded: function (e) {
+		container = $(e).attr("alt")
+		$(container + " a.open-new").each(function () {
+			app.doMarkNew($(this).attr("alt"), 1, container)
+		});
+		$.mobile.changePage("index.html" + container);
+	},
+	
+	doMarkReaded: function (e) {
+		container = $(e).attr("alt")
+		$(container + " a.open-new").each(function () {
+			app.doMarkNew($(this).attr("alt"), 0, container)
+		});
+		$.mobile.changePage("index.html" + container);
+		
+	},
+	
+	doMarkNew: function (id, is_readed) {
+		console.log("marcando id=" + id + " como: " + is_readed);
+		app.db.transaction(function (ctx) {
+			ctx.executeSql("UPDATE news SET is_new = ? WHERE id = ?", [is_readed, id]);
+		})
+		
+	},
+	
 	// Intermediario para mostrar la noticia, local o remotamente
 	//showNew: function (params) {
 	//	// Si no hay conexion se busca localmente, de lo contrario, remotamente
@@ -1143,6 +1199,8 @@ var app = {
 			ctx.executeSql("SELECT title, content FROM news WHERE id = ?", [params], function (tx, results) {
 				// SI hay resultados se actualizan los contenedores
 				if (results.rows.length > 0) {
+					mark = $("a.mark-unread")[0];
+					$(mark).attr("onclick", "app.doMarkNew('"+params+"', 1)");
 					$.mobile.silentScroll(0);
 					$("#new-title").html(results.rows.item(0).title)
 					$("#new-content").html(results.rows.item(0).content)

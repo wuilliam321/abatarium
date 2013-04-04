@@ -202,7 +202,19 @@
 						data-filter-placeholder="Buscar noticias..." data-filter="true"
 						data-role="listview" style="margin-bottom: 0px">
 					</ul>
-					<a href="#cargar-mas" data-role="button">Cargas mas noticias</a>
+					<input type="hidden" id="n-page" value="0" />
+					<div class="ui-grid-a">
+						<div class="ui-block-a">
+							<div class="grid-box">
+								<a href="#" onclick="app.goPrevNews('#todas')" data-role="button">Anteriores</a>
+							</div>
+						</div>
+						<div class="ui-block-b">
+							<div class="grid-box">
+								<a href="#" onclick="app.goNextNews('#todas')" data-role="button">Siguientes</a>
+							</div>
+						</div>
+					</div>
 				</div>
 			</div>
 		</div>
@@ -212,8 +224,8 @@
 				<ul>
 					<li><a href="#todas" onclick="app.doReloadPage('#todas')" id="search" data-icon="custom"
 						data-theme="b" data-ajax="false">Actualizar</a></li>
-					<li><a href="#" id="eye" data-icon="custom"
-						data-theme="b" data-ajax="false">Marcar como leidas</a></li>
+					<li><a href="#marcar" data-rel="dialog" id="eye" data-icon="custom"
+						data-theme="b" onclick="app.doMark('#todas')">Marcar</a></li>
 					<li><a href="#configurar" id="pencil" data-icon="custom"
 						data-theme="b" data-ajax="false">Configurar</a></li>
 					<li><a href="#salir" id="run" data-icon="custom"
@@ -263,7 +275,19 @@
 						data-filter-placeholder="Buscar noticias..." data-filter="true"
 						data-role="listview" style="margin-bottom: 0px">
 					</ul>
-					<a href="#cargar-mas" data-role="button">Cargas mas noticias</a>
+					<input type="hidden" id="n-page" value="0" />
+					<div class="ui-grid-a">
+						<div class="ui-block-a">
+							<div class="grid-box">
+								<a href="#" onclick="app.goPrevNews('#personalizadas')" data-role="button">Anteriores</a>
+							</div>
+						</div>
+						<div class="ui-block-b">
+							<div class="grid-box">
+								<a href="#" onclick="app.goNextNews('#personalizadas')" data-role="button">Siguientes</a>
+							</div>
+						</div>
+					</div>
 				</div>
 			</div>
 		</div>
@@ -273,8 +297,8 @@
 				<ul>
 					<li><a href="#personalizadas" onclick="app.doReloadPage('#personalizadas')" id="search" data-icon="custom"
 						data-theme="b" data-ajax="false">Actualizar</a></li>
-					<li><a href="#" id="eye" data-icon="custom"
-						data-theme="b" data-ajax="false">Marcar como leidas</a></li>
+					<li><a href="#marcar" data-rel="dialog" id="eye" data-icon="custom"
+						data-theme="b" onclick="app.doMark('#personalizadas')">Marcar</a></li>
 					<li><a href="#configurar" id="pencil" data-icon="custom"
 						data-theme="b" data-ajax="false">Configurar</a></li>
 					<li><a href="#salir" id="run" data-icon="custom"
@@ -284,6 +308,21 @@
 		</div>
 	</div>
 	<!-- Page::Personalizadas END -->
+	
+	<!-- Page::Marcar -->
+	<div data-role="page" id="marcar" style="margin:0px">
+		<div data-role="header" class="page-header">
+			<h1>Atención!</h1>
+		</div>
+		<div data-role="content">
+			<p>Marcar todas las noticias como...</p>
+			
+			<a href="#" class="do-mark" data-role="button" onclick="app.doMarkReaded(this)">Leidas</a>
+			<a href="#" class="do-mark" data-role="button" onclick="app.doMarkUnreaded(this)">No Leidas</a>
+			
+		</div>
+	</div>
+	<!-- Page::Marcar END -->
 
 
 	<!-- Page::Ver Noticia -->
@@ -301,6 +340,15 @@
 		</div>
 
 		<div data-role="content" id="new-content"></div>
+
+		<div data-role="footer">
+			<div data-role="navbar" class="custom-icons">
+				<ul>
+					<li><a href="#" id="eye" data-icon="custom" class="mark-unread"
+						data-theme="b" data-rel="back" data-ajax="false">Marcar como no leída</a></li>
+				</ul>
+			</div>
+		</div>
 	</div>
 	<!-- Page::Ver Noticia END -->
 
