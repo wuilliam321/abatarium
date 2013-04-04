@@ -28,10 +28,21 @@
 
 </head>
 <body>
+	<!-- Page::Splash -->
+	<div data-role="page" id="splash">
+		<div data-role="content">
+			<script type="text/javascript">
+				app.doHideSplash()
+			</script>
+		</div>
+	</div>
+	<!-- Page::Splash END -->
+	
+	
 	<!-- Page::Main -->
 	<div data-role="page" id="main">
 
-		<div data-role="header" class="page-header">
+		<div data-role="header" class="page-header" data-backbtn="false">
 			<div class="logo"></div>
 		</div>
 
@@ -191,6 +202,7 @@
 						data-filter-placeholder="Buscar noticias..." data-filter="true"
 						data-role="listview" style="margin-bottom: 0px">
 					</ul>
+					<a href="#cargar-mas" data-role="button">Cargas mas noticias</a>
 				</div>
 			</div>
 		</div>
@@ -198,17 +210,16 @@
 		<div data-role="footer">
 			<div data-role="navbar" class="custom-icons" data-grid="c">
 				<ul>
-					<li><a href="#perfil" id="users" data-icon="custom"
-						data-theme="b" data-ajax="false">Perfil</a></li>
-					<li><a href="#ayuda" id="sign" data-icon="custom"
-						data-theme="b">Ayuda</a></li>
+					<li><a href="#todas" onclick="app.doReloadPage('#todas')" id="search" data-icon="custom"
+						data-theme="b" data-ajax="false">Actualizar</a></li>
+					<li><a href="#" id="eye" data-icon="custom"
+						data-theme="b" data-ajax="false">Marcar como leidas</a></li>
 					<li><a href="#configurar" id="pencil" data-icon="custom"
 						data-theme="b" data-ajax="false">Configurar</a></li>
 					<li><a href="#salir" id="run" data-icon="custom"
 						data-theme="b">Salir</a></li>
 				</ul>
 			</div>
-
 		</div>
 	</div>
 	<!-- Page::Todas END -->
@@ -252,6 +263,7 @@
 						data-filter-placeholder="Buscar noticias..." data-filter="true"
 						data-role="listview" style="margin-bottom: 0px">
 					</ul>
+					<a href="#cargar-mas" data-role="button">Cargas mas noticias</a>
 				</div>
 			</div>
 		</div>
@@ -259,17 +271,16 @@
 		<div data-role="footer">
 			<div data-role="navbar" class="custom-icons" data-grid="c">
 				<ul>
-					<li><a href="#perfil" id="users" data-icon="custom"
-						data-theme="b" data-ajax="false">Perfil</a></li>
-					<li><a href="#ayuda" id="sign" data-icon="custom"
-						data-theme="b">Ayuda</a></li>
+					<li><a href="#personalizadas" onclick="app.doReloadPage('#personalizadas')" id="search" data-icon="custom"
+						data-theme="b" data-ajax="false">Actualizar</a></li>
+					<li><a href="#" id="eye" data-icon="custom"
+						data-theme="b" data-ajax="false">Marcar como leidas</a></li>
 					<li><a href="#configurar" id="pencil" data-icon="custom"
 						data-theme="b" data-ajax="false">Configurar</a></li>
 					<li><a href="#salir" id="run" data-icon="custom"
 						data-theme="b">Salir</a></li>
 				</ul>
 			</div>
-
 		</div>
 	</div>
 	<!-- Page::Personalizadas END -->

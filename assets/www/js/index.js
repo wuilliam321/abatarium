@@ -61,9 +61,6 @@ var app = {
 			// Conectar a la BD
 			app.doConnect('newsdb', '1.0', 'News Database', 1000000);
 
-			// Checkear sesion
-			app.doCheckSession();
-
 			// Construyendo las operaciones principales
 			app.doMainOperations();
 			
@@ -87,18 +84,18 @@ var app = {
 			animation : "slide",
 			controlsContainer : ".flex-container"
 		};
-
-		// Iniciando el slider principal
-		$('#main .flexslider').flexslider(flexopts);
-
+		
 		// Slider del main
 		$("#main").live('pageshow', function(event) {
 			$('#main .flexslider').flexslider(flexopts);
 		});
 		
 		// Slider principal
+		//$('#principal .flexslider').flexslider(flexopts);
 		$("#principal").live('pageshow', function(event) {
 			$('#principal .flexslider').flexslider(flexopts);
+			// Checkear sesion
+			app.doCheckSession();
 			app.doSync();
 			app.doCheckNewUser();
 		});
@@ -193,7 +190,7 @@ var app = {
 			// Usuarios solo pueden ser creados teniendo conexion
 			if (navigator.connection.type == Connection.NONE) {
 				navigator.notification.alert("Debe tener conexión para crear usuarios", null, "Error!", "Continuar");
-				$.mobile.changePage("index.html");
+				$.mobile.changePage("index.html#main");
 			}
 		});
 		
@@ -203,19 +200,28 @@ var app = {
 			// Reinicio de clave solo si tiene conexion
 			if (navigator.connection.type == Connection.NONE) {
 				navigator.notification.alert("Debe tener conexión para reestablecer su clave", null, "Error!", "Continuar");
-				$.mobile.changePage("index.html");
+				$.mobile.changePage("index.html#main");
 			}
 		});
 	},
+	// Splash Screen
+	doHideSplash: function () {
+		$(function() {
+			setTimeout(function () {
+				$.mobile.changePage("#principal", "fade");
+			}, 1500);
+		});
+	},
+	
+	// Reload page
+	doReloadPage: function (url) {
+		app.doSync(url);
+	},
 	
 	// Sync
-	doSync: function () {
+	doSync: function (url) {
 		// Si hay conexion TODO: recordar que aqui es la opcion que tendra en configuraciones para definir cuando actualizar
 		if (navigator.connection.type != Connection.NONE) {
-			console.log("Syncing...");
-			// Sincronizando todas las noticias
-			app.getNews("#all-news", '');
-			
 			// Sincronizando las noticias personalizadas
 			app.db.transaction(function (ctx) {
 				// Variable para contener las palabras claves del usuario
@@ -223,12 +229,19 @@ var app = {
 				
 				// Se buscan las palabras calves del usaurio activo
 				ctx.executeSql("select s.user_id, k.* from keywords as k join users_keywords as uk on uk.keyword_id = k.id join users as u on u.id = uk.user_id JOIN sessions as s on s.user_id = u.id", [], function (tx, results) {
-					for(i=0; i < results.rows.length; i++) {
-						// Se ingresan las KW en el arreglo
-						kws.push(results.rows.item(i).name);
+					if (results.rows.length > 0) {
+						console.log("Syncing...");
+						
+						for(i=0; i < results.rows.length; i++) {
+							// Se ingresan las KW en el arreglo
+							kws.push(results.rows.item(i).name);
+						}
+						// Sincronizando todas las noticias
+						app.getNews(false, '', url);
+						
+						// Remotamente necesito construir un texto (CakePHP Route Valid)
+						app.getNews(false, "/" + kws.join('/'), url);
 					}
-					// Remotamente necesito construir un texto (CakePHP Route Valid)
-					app.getNews("#custom-news", "/" + kws.join('/'));
 				})
 			});
 			
@@ -494,7 +507,7 @@ var app = {
 		app.db.transaction(function (ctx) {
 			ctx.executeSql("DELETE FROM sessions");
 		});
-		$.mobile.changePage("index.html");
+		$.mobile.changePage("index.html#main");
 	},
 	
 	// Comprueba si el usuario esta logeado o no
@@ -505,6 +518,8 @@ var app = {
 				// Si hay sesion se redirecciona a principal
 				if (results.rows.length > 0) {
 					$.mobile.changePage("index.html#principal");
+				} else {
+					$.mobile.changePage("index.html#main");
 				}
 			}, app.onErrorDB)
 		});
@@ -857,7 +872,7 @@ var app = {
 						break;
 					case 1:
 						navigator.notification.alert("Usuario creado con exito, enviamos su clave al correo", null, "Éxito", "Continuar");
-						$.mobile.changePage("index.html");
+						$.mobile.changePage("index.html#main");
 						break;
 					case 2:
 						navigator.notification.alert("Ocurrio algun problema, intente nuevamente", null, "Alerta", "Continuar");
@@ -892,7 +907,7 @@ var app = {
 						break;
 					case 1:
 						navigator.notification.alert("Clave reseteada, la enviamos a su correo", null, "Éxito", "Continuar");
-						$.mobile.changePage("index.html");
+						$.mobile.changePage("index.html#main");
 						break;
 					case 2:
 						navigator.notification.alert("Ocurrio algun problema, intente nuevamente", null, "Alerta", "Continuar");
@@ -953,13 +968,16 @@ var app = {
 				}
 				
 				// Buscando las noticicas
-				tx.executeSql("SELECT id, title, link, resume FROM news " + where + " ORDER BY id DESC LIMIT ?", [showed_news], function (tx, results) {
+				tx.executeSql("SELECT id, title, link, resume, is_new FROM news " + where + " ORDER BY id DESC LIMIT ?", [showed_news], function (tx, results) {
 					// Si hay noticias se construye el list view con ellas
 					if (results.rows.length > 0) {
 						for(i=0; i < results.rows.length; i++) {
 							console.log("Loading new: " + results.rows.item(i).id);
 							// Contenedor de noticias
 							container = $("<li>").addClass("ui-btn-icon-right ui-li-has-arrow ui-li ui-li-static ui-body-c");
+							if (results.rows.item(i).is_new) {
+								$(container).addClass("new")
+							}
 							
 							// Boton de la noticia
 							button = $("<div>").addClass("ui-btn-inner ui-li ui-li-static ui-body-c").attr("aria-hidden", true);
@@ -1022,7 +1040,7 @@ var app = {
 	//},
 	
 	// Obtenido las noticias
-	getNews: function (news_container, params) {
+	getNews: function (news_container, params, refresh_url) {
 		app.db.transaction(function (ctx) {
 			// Obteniendo las configuraciones locales para saber el numero de noticias a mostrar
 			ctx.executeSql("select st.* from settings as st join users as u on u.id = st.user_id JOIN sessions as s on s.user_id = u.id LIMIT 1", [], function (tx, results) {
@@ -1046,35 +1064,38 @@ var app = {
 					jsonpCallback: "callback",
 					success: function (data, status) {
 						$(data).each(function (i, item) {
-							// Contenedor de la noticia
-							container = $("<li>").addClass("ui-btn-icon-right ui-li-has-arrow ui-li ui-li-static ui-body-c");
-							
-							// Boton de la noticia
-							button = $("<div>").addClass("ui-btn-inner ui-li ui-li-static ui-body-c").attr("aria-hidden", true);
-							
-							// Texto de la noticia
-							left = $("<div>").addClass("ui-btn-text");
-							
-							// Flexa indicadora
-							arrow = $("<span>").addClass("ui-icon ui-icon-arrow-r ui-icon-shadow");
-							
-							// Enlace de la noticia
-							link = $("<a>").attr("href", "#ver-noticia").addClass("ui-link-inherit open-new").attr({"data-ajax": "false", "alt": item.News.id});
-							
-							// Titulo
-							title = $("<h3>").text(item.News.title).addClass("ui-li-heading");
-							
-							// REsumen
-							resume = $("<p>").text($(item.News.resume).text()).addClass("ui-li-desc");
-							
-							// Construyendo el html
-							$(link).append(title)
-							$(link).append(resume)
-							$(left).append(link)
-							$(button).append(left);
-							$(button).append(arrow);
-							$(container).append(button);
-							$(news_container).append(container);
+							//// Contenedor de la noticia
+							//container = $("<li>").addClass("ui-btn-icon-right ui-li-has-arrow ui-li ui-li-static ui-body-c");
+							//
+							//// Boton de la noticia
+							//button = $("<div>").addClass("ui-btn-inner ui-li ui-li-static ui-body-c").attr("aria-hidden", true);
+							//
+							//// Texto de la noticia
+							//left = $("<div>").addClass("ui-btn-text");
+							//if (!results.rows.item(i).is_new) {
+							//	$(left).addClass("readed")
+							//}
+							//
+							//// Flexa indicadora
+							//arrow = $("<span>").addClass("ui-icon ui-icon-arrow-r ui-icon-shadow");
+							//
+							//// Enlace de la noticia
+							//link = $("<a>").attr("href", "#ver-noticia").addClass("ui-link-inherit open-new").attr({"data-ajax": "false", "alt": item.News.id});
+							//
+							//// Titulo
+							//title = $("<h3>").text(item.News.title).addClass("ui-li-heading");
+							//
+							//// REsumen
+							//resume = $("<p>").text($(item.News.resume).text()).addClass("ui-li-desc");
+							//
+							//// Construyendo el html
+							//$(link).append(title)
+							//$(link).append(resume)
+							//$(left).append(link)
+							//$(button).append(left);
+							//$(button).append(arrow);
+							//$(container).append(button);
+							//$(news_container).append(container);
 							
 							// Guardando las noticias localmente
 							app.db.transaction(function (ctx) {
@@ -1090,6 +1111,10 @@ var app = {
 							});
 						})
 						// TODO: falta hace un mensaje de cuando no hay noticias
+					}
+				}).done(function () {
+					if (refresh_url) {
+						$(refresh_url).trigger("pageshow");
 					}
 				});
 			})
@@ -1118,8 +1143,10 @@ var app = {
 			ctx.executeSql("SELECT title, content FROM news WHERE id = ?", [params], function (tx, results) {
 				// SI hay resultados se actualizan los contenedores
 				if (results.rows.length > 0) {
+					$.mobile.silentScroll(0);
 					$("#new-title").html(results.rows.item(0).title)
 					$("#new-content").html(results.rows.item(0).content)
+					ctx.executeSql("UPDATE news SET is_new = ? WHERE id = ?", [0, params]);
 				}
 			}, function () {console.log("Error loading local new"); });
 		});
@@ -1155,7 +1182,7 @@ var app = {
 	
 	// Construyendo las tablas si no existen localmente
 	populateDB: function (tx) {
-		tx.executeSql("CREATE TABLE IF NOT EXISTS news (id INTEGER PRIMARY KEY AUTOINCREMENT, diary TEXT, title TEXT, link TEXT, author TEXT, date TEXT, category_id TEXT, category_alias TEXT, resume TEXT, content TEXT, images TEXT, tags TEXT, showed NUMERIC, reviewed NUMERIC, created NUMERIC)");
+		tx.executeSql("CREATE TABLE IF NOT EXISTS news (id INTEGER PRIMARY KEY AUTOINCREMENT, diary TEXT, title TEXT, link TEXT, author TEXT, date TEXT, category_id TEXT, category_alias TEXT, resume TEXT, content TEXT, images TEXT, is_new NUMERIC DEFAULT 1, tags TEXT, showed NUMERIC, reviewed NUMERIC, created NUMERIC)");
 		tx.executeSql("CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY AUTOINCREMENT, email TEXT UNIQUE, password TEXT, is_new NUMERIC, name TEXT, lastname TEXT, latitude TEXT, longitude TEXT, location TEXT, website TEXT)");
 		tx.executeSql("CREATE TABLE IF NOT EXISTS sessions (id INTEGER PRIMARY KEY AUTOINCREMENT, user_id INTEGER UNIQUE, last_access TIMESTAMP DEFAULT CURRENT_TIMESTAMP)");
 		tx.executeSql("CREATE TABLE IF NOT EXISTS settings (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, value TEXT, extra TEXT, user_id INTEGER)");

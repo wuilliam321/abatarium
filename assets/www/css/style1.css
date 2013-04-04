@@ -2184,3 +2184,28 @@ form label.error {
 div.custom-icons {
 	margin: 0;
 }
+#splash {
+	background:url(../images/logo.png) center center no-repeat;
+	background-color:#2D2D2D;
+}
+#personalizadas li.new:before, #todas li.new:before {
+	content: "Nueva";
+	position: absolute;
+	left: 5px;
+	top: 4px;
+	background-color: #ad0000;
+	font-family: 'Kaushan Script', cursive;
+	padding: 0px 5px 0px 2px;
+	margin: 0;
+	color: #fff;
+	z-index: 10000;
+	-moz-border-radius: .4em /*{global-radii-blocks}*/;
+	-webkit-border-radius: .4em /*{global-radii-blocks}*/;
+	border-radius: .4em /*{global-radii-blocks}*/;
+	text-shadow: 0 1px 0 #000;
+	font-size: 0.7em;
+	border: 1px solid #B44343;
+}
+#personalizadas .readed h3, #todas .readed h3 {
+	font-weight:normal;
+}
