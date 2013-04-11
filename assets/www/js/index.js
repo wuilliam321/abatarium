@@ -1105,7 +1105,7 @@ var app = {
 						// capturando el numero de noticias a mostrar
 						npages = results.rows.item(0).count;
 					}
-					npages = npages / showed_news;
+					npages = Math.ceil(npages / showed_news);
 					npages = parseInt(npages);
 					$(pages).val(npages);
 					app.doGeneratePagination(news_container, npages);
@@ -1127,7 +1127,7 @@ var app = {
 					jsonpCallback: "callback"
 				})
 			).done(function (data) {
-				npages = data.count / showed_news;
+				npages = Math.ceil(data.count / showed_news);
 				npages = parseInt(npages);
 				$(pages).val(npages);
 				app.doGeneratePagination(news_container, npages);
@@ -1152,7 +1152,7 @@ var app = {
 			$(gopage).append($('<option>', {
 				value: i,
 				text: i,
-				selected: (parseInt($("#n-page").val()) == i) ? true : false
+				selected: (parseInt($(container + " #n-page").val()) == i) ? true : false
 			}));
 		}
 		gonext = $("<a>").attr({"data-role":"button", "onclick": "app.goNextNews('"+container+"')"}).text(">");
