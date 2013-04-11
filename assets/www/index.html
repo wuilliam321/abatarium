@@ -202,19 +202,9 @@
 						data-filter-placeholder="Buscar noticias..." data-filter="true"
 						data-role="listview" style="margin-bottom: 0px">
 					</ul>
-					<input type="hidden" id="n-page" value="0" />
-					<div class="ui-grid-a">
-						<div class="ui-block-a">
-							<div class="grid-box">
-								<a href="#" onclick="app.goPrevNews('#todas')" data-role="button">Anteriores</a>
-							</div>
-						</div>
-						<div class="ui-block-b">
-							<div class="grid-box">
-								<a href="#" onclick="app.goNextNews('#todas')" data-role="button">Siguientes</a>
-							</div>
-						</div>
-					</div>
+					<input type="hidden" id="n-page" value="1" />
+					<input type="hidden" id="n-pages" value="0" />
+					<div class="ui-grid-b" id="pagination"></div>
 				</div>
 			</div>
 		</div>
@@ -275,8 +265,9 @@
 						data-filter-placeholder="Buscar noticias..." data-filter="true"
 						data-role="listview" style="margin-bottom: 0px">
 					</ul>
-					<input type="hidden" id="n-page" value="0" />
-					<div class="ui-grid-a">
+					<input type="hidden" id="n-page" value="1" />
+					<input type="hidden" id="n-pages" value="0" />
+					<div class="ui-grid-a" id="pagination">
 						<div class="ui-block-a">
 							<div class="grid-box">
 								<a href="#" onclick="app.goPrevNews('#personalizadas')" data-role="button">Anteriores</a>

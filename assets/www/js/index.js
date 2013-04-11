@@ -132,7 +132,6 @@ var app = {
 		$("#configurar").live('pageshow', function(event) {
 			$('#configurar .flexslider').flexslider(flexopts);
 			// Si no hay conexion, no hay opcion de agregar nuevas KW
-			// TODO: Ver que si sea posible
 			if (navigator.connection.type == Connection.NONE) {
 				// Ocultando el autocomplete
 				$("#autocomplete").prev().hide();
@@ -156,6 +155,7 @@ var app = {
 		$("#todas").live('pageshow', function(event) {
 			$('#todas .flexslider').flexslider(flexopts);
 			app.getLocalNews("#all-news", '', "#todas #n-page");
+			app.getNumberPages("#all-news", '', "#todas #n-pages");
 		});
 		
 		// Slider de todas las noticias personalizadas y carga de las mismas
@@ -174,6 +174,7 @@ var app = {
 					
 					// Localmente se requiere el arreglo solamente
 					app.getLocalNews("#custom-news", kws, "#personalizadas #n-page");
+					app.getNumberPages("#custom-news", kws, "#personalizadas #n-pages");
 				})
 			});
 		});
@@ -219,8 +220,7 @@ var app = {
 	},
 	
 	// Sync
-	doSync: function (url) {
-		// Si hay conexion TODO: recordar que aqui es la opcion que tendra en configuraciones para definir cuando actualizar
+	doSync: function (url, page) {
 		if (navigator.connection.type != Connection.NONE) {
 			// Sincronizando las noticias personalizadas
 			app.db.transaction(function (ctx) {
@@ -237,17 +237,16 @@ var app = {
 							kws.push(results.rows.item(i).name);
 						}
 						// Sincronizando todas las noticias
-						app.getNews(false, '', url);
+						app.getNews(false, '', url, page);
 						
-						// Remotamente necesito construir un texto (CakePHP Route Valid)
-						app.getNews(false, "/" + kws.join('/'), url);
+						// Fix para iniciar el ajax a tiempos diferentes
+						setTimeout(function () {
+							// Remotamente necesito construir un texto (CakePHP Route Valid)
+							app.getNews(false, "/" + kws.join('/'), url, page);
+						}, 200);
 					}
 				})
 			});
-			
-			// TODO: subir datos de configuracion si cambiaron
-			// TODO: Subir datos del usuario si cambiaron
-			// TODO: Para los casos anteriores, meter campo changed=1 en las tablas
 		}
 	},
 	
@@ -541,52 +540,15 @@ var app = {
 
 	// Guardando perfil
 	doSaveProfile : function(user) {
-		// Si no hay conexion, se almacena localmente el cambio, de lo contrario se hace directamente en el servidor
-		//if (navigator.connection.type == Connection.NONE) {
-			// TODO: Esto si a aqui solamente, verificar que sea posible, boton changed ojo
-			console.log("Saving local profile");
-			app.db.transaction(function (tx) {
-				tx.executeSql("UPDATE users SET email = ?, name = ?, lastname = ?, latitude = ?, longitude = ?, location = ?, website = ? WHERE id = ?", [user[1].value, user[2].value, user[3].value, user[4].value, user[5].value, user[6].value, user[7].value, user[0].value], function() {
-					navigator.notification.alert("Usuario actualizado con exito", null, "Éxito", "Continuar");
-					$.mobile.changePage("index.html#principal");
-				}, function () {
-					navigator.notification.alert("Usuario no pudo ser actualizado, intente de nuevo", null, "Error!", "Continuar");
-				});
+		console.log("Saving local profile");
+		app.db.transaction(function (tx) {
+			tx.executeSql("UPDATE users SET email = ?, name = ?, lastname = ?, latitude = ?, longitude = ?, location = ?, website = ? WHERE id = ?", [user[1].value, user[2].value, user[3].value, user[4].value, user[5].value, user[6].value, user[7].value, user[0].value], function() {
+				navigator.notification.alert("Usuario actualizado con exito", null, "Éxito", "Continuar");
+				$.mobile.changePage("index.html#principal");
+			}, function () {
+				navigator.notification.alert("Usuario no pudo ser actualizado, intente de nuevo", null, "Error!", "Continuar");
 			});
-		//} else {
-		//	// TODO: Esto va en el Sync
-		//	$(function() {
-		//		var url = app.base_url + "/users/update";
-		//		$.ajax({
-		//			beforeSend: function() { $.mobile.showPageLoadingMsg(); },
-		//			complete: function() { $.mobile.hidePageLoadingMsg(); },
-		//			url: url,
-		//			data: user,
-		//			dataType: 'jsonp',
-		//			jsonpCallback: "callback",
-		//		}).done(function (data) {
-		//			// mensajes de feedback
-		//			switch (data.code) {
-		//				case 0:
-		//					navigator.notification.alert("Usuario no pudo ser actualizado, intente de nuevo", null, "Error!", "Continuar");
-		//					break;
-		//				case 1:
-		//					navigator.notification.alert("Usuario actualizado con exito", null, "Éxito", "Continuar");
-		//					app.db.transaction(function (tx) {
-		//						tx.executeSql("UPDATE users SET id = ?, email = ?, password = ?, is_new = ?, name = ?, lastname = ?, latitude = ?, longitude = ?, location = ?, website = ? WHERE id = ?", [data.item.User.id, data.item.User.email, data.item.User.password, data.item.User.is_new, data.item.User.name, data.item.User.lastname, data.item.User.latitude, data.item.User.longitude, data.item.User.location, data.item.User.website, data.item.User.id], function() {console.log("actualizando usuario")}, function () {console.log("error actualizando usuario")});
-		//					})
-		//					$.mobile.changePage("index.html#principal");
-		//					break;
-		//				case 2:
-		//					navigator.notification.alert("Ocurrio algun problema, intente nuevamente", null, "Alerta", "Continuar");
-		//					break;
-		//			}
-		//		}).error (function () {
-		//			// En caso de error
-		//			navigator.notification.alert("Ocurrio algun problema inesperado, intente nuevamente", null, "Alerta", "Continuar");
-		//		});
-		//	})
-		//}
+		});
 	},
 	
 	
@@ -600,7 +562,7 @@ var app = {
 				url: url,
 				data: user,
 				dataType: 'jsonp',
-				jsonpCallback: "callback",
+				jsonpCallback: "callback"
 			}).done(function (data) {
 				// Mensajes de feedback
 				switch (data.code) {
@@ -648,65 +610,20 @@ var app = {
 
 	// Guardando configuraciones
 	doSaveSettings : function(setting) {
-		// Si no hay conectividad se guardan localmente, de lo contrario se guardan tambien en el servidor
-		//if (navigator.connection.type == Connection.NONE) {
-			// TODO: Esto sera lo unico de esta seccion Verificar que sea posible
-			console.log("Saving local settings");
-			console.log(setting[setting.length - 1].value);
-			app.db.transaction(function (tx) {
-				// Actualizando el valor donde el usuario sea el que esta conectado
-				tx.executeSql("UPDATE settings SET value = ? WHERE user_id = ?", [setting[setting.length - 1].value, setting[0].value], function() {
-					// Mensajes de feedback
-					navigator.notification.alert("Configuración actualizada con exito", null, "Éxito", "Continuar");
-					$.mobile.changePage("index.html#principal");
-				}, function () {
-					// En caso de error
-					navigator.notification.alert("La configuración no pudo ser guardada, intente de nuevo", null, "Error!", "Continuar");
-				});
-				// Actualizando al usuario para que ya no sea un usuario nuevo
-				tx.executeSql("UPDATE users SET is_new = ? WHERE id = ?", [0, setting[0].value], function() { console.log("Usuario no es nuevo ya") }, function () { console.log("No se pudo hacer viejo al usuario") });
+		console.log("Saving local settings");
+		app.db.transaction(function (tx) {
+			// Actualizando el valor donde el usuario sea el que esta conectado
+			tx.executeSql("UPDATE settings SET value = ? WHERE user_id = ?", [setting[setting.length - 1].value, setting[0].value], function() {
+				// Mensajes de feedback
+				navigator.notification.alert("Configuración actualizada con exito", null, "Éxito", "Continuar");
+				$.mobile.changePage("index.html#principal");
+			}, function () {
+				// En caso de error
+				navigator.notification.alert("La configuración no pudo ser guardada, intente de nuevo", null, "Error!", "Continuar");
 			});
-		//} else {
-		//	// TODO: esto ira en el Sync
-		//	$(function() {
-		//		var url = app.base_url + "/settings/save";
-		//		$.ajax({
-		//			beforeSend: function() { $.mobile.showPageLoadingMsg(); },
-		//			complete: function() { $.mobile.hidePageLoadingMsg(); },
-		//			url: url,
-		//			data: setting,
-		//			dataType: 'jsonp',
-		//			jsonpCallback: "callback",
-		//		}).done(function (data) {
-		//			// Mensajes de feedback
-		//			switch (data.code) {
-		//				case 0:
-		//					navigator.notification.alert("La configuración no pudo ser guardada, intente de nuevo", null, "Error!", "Continuar");
-		//					break;
-		//				case 1:
-		//					navigator.notification.alert("Configuración actualizada con exito", null, "Éxito", "Continuar");
-		//					app.db.transaction(function (tx) {
-		//						// Si ingresan, o actualizan las configuraciones
-		//						tx.executeSql("SELECT st.* FROM settings as st join users as u on u.id = st.user_id", [], function (ctx, results) {
-		//							if (results.rows.length > 0) {
-		//								tx.executeSql("UPDATE settings SET value = ? WHERE id = ?", [data.item.Setting.value, data.item.Setting.id], function() {console.log("actualizando configuraciones")}, function () {console.log("error actualizando configuraciones")});
-		//							} else {
-		//								tx.executeSql("INSERT INTO settings (id, name, value,user_id) values (?, showed_news, ?, ?)", [data.item.Setting.id, data.item.Setting.value, data.item.Setting.user_id], function() {console.log("guardando configuraciones")}, function () {console.log("error guardando configuraciones")});
-		//							}
-		//						});
-		//					})
-		//					$.mobile.changePage("index.html#principal");
-		//					break;
-		//				case 2:
-		//					navigator.notification.alert("Ocurrio algun problema, intente nuevamente", null, "Alerta", "Continuar");
-		//					break;
-		//			}
-		//		}).error (function () {
-		//			// En caso de error
-		//			navigator.notification.alert("Ocurrio algun problema inesperado, intente nuevamente", null, "Alerta", "Continuar");
-		//		});
-		//	})
-		//}
+			// Actualizando al usuario para que ya no sea un usuario nuevo
+			tx.executeSql("UPDATE users SET is_new = ? WHERE id = ?", [0, setting[0].value], function() { console.log("Usuario no es nuevo ya") }, function () { console.log("No se pudo hacer viejo al usuario") });
+		});
 	},
 	
 	
@@ -722,7 +639,6 @@ var app = {
 				
 				// Si no hay conexion, no se permite eliminarlos ni agregar nuevos
 				disabled = '';
-				// TODO: Verificar que si sea posible guardar palabras claves nuevas
 				if (navigator.connection.type == Connection.NONE) {
 					disabled = 'disabled="disabled"';
 					input += "<p><small>Para cambiar sus palabras claves debe habilitar la conectividad</small></p>";
@@ -754,10 +670,6 @@ var app = {
 				$ul.html( "" );
 				// Si hay un valor agregado y tiene mas de 2 caracteres
 				if ( value && value.length > 1 ) {
-					// Mensajes de "cargando"
-					// TODO: FIx este mensaje
-					$ul.html( "<li><div class='ui-loader'><span class='ui-icon ui-icon-loading'></span></div></li>" );
-					
 					// Actualizando la lista para mostrar el mensaje con el estilo
 					$ul.listview( "refresh" );
 					
@@ -863,7 +775,7 @@ var app = {
 				url: url,
 				data: user,
 				dataType: 'jsonp',
-				jsonpCallback: "callback",
+				jsonpCallback: "callback"
 			}).done(function (data) {
 				// Mensajes de feedback
 				switch (data.code) {
@@ -898,7 +810,7 @@ var app = {
 				url: url,
 				data: user,
 				dataType: 'jsonp',
-				jsonpCallback: "callback",
+				jsonpCallback: "callback"
 			}).done(function (data) {
 				// Mensajes de feedback
 				switch (data.code) {
@@ -920,18 +832,6 @@ var app = {
 		})
 	},
 	
-	// Intermediario para obtener las noticias
-	//getLatestNews : function (news_container) {
-	//	$(news_container).empty();
-	//	params = '';
-	//	// Si hay conexion devuelve las noticias del servidor de lo contrario, las locales
-	//	if (navigator.connection.type == Connection.NONE) {
-	//		app.getLocalNews(news_container, params);
-	//	} else {
-	//		app.getNews(news_container, params);
-	//	}
-	//},
-	
 	
 	// Obteniendo las noticias locales
 	getLocalNews: function (news_container, params, page) {
@@ -940,10 +840,10 @@ var app = {
 		} else {
 			page = 1;
 		}
-		console.log("Loading local custom news...");
+		console.log("Loading local custom news page="+page);
 		// Limpiando el contenedor
 		$(news_container).empty();
-		// TODO: Abrir el loading fancy
+		
 		app.db.transaction(function (ctx) {
 			// Seleccionando las configuraciones para determinar el numero de noticias a mostrar
 			ctx.executeSql("select st.* from settings as st join users as u on u.id = st.user_id JOIN sessions as s on s.user_id = u.id LIMIT 1", [], function (tx, results) {
@@ -960,7 +860,6 @@ var app = {
 					// Auxiliar para la construccion de un sql bien formado
 					aux = new Array();
 					for (i = 0; i < params.length; i++) {
-						console.log("Param: " + params[i]);
 						// Condiciones de busqueda
 						aux.push("tags LIKE '%" + params[i] + "%'");
 						aux.push("content LIKE '%" + params[i] + "%'");
@@ -971,56 +870,124 @@ var app = {
 						aux.push("author LIKE '%" + params[i] + "%'");
 					}
 					where = " WHERE " + aux.join(" OR ");
+					mparams = "/" + params.join("/");
+				} else {
+					mparams = params;
 				}
-				min = (page * showed_news) - showed_news
-				max = page * showed_news
-				console.log('SELECT id, title, link, resume, is_new FROM news ' + where + ' ORDER BY id DESC LIMIT '+max+', '+showed_news);
+				max = (page - 1) * showed_news;
 				// Buscando las noticicas
 				tx.executeSql("SELECT id, title, link, resume, is_new FROM news " + where + " ORDER BY id DESC LIMIT ?, ?", [max, showed_news], function (tx, results) {
-					// Si hay noticias se construye el list view con ellas
-					if (results.rows.length > 0) {
-						for(i=0; i < results.rows.length; i++) {
-							console.log("Loading new: " + results.rows.item(i).id);
-							// Contenedor de noticias
-							container = $("<li>").addClass("ui-btn-icon-right ui-li-has-arrow ui-li ui-li-static ui-body-c");
-							if (results.rows.item(i).is_new) {
-								$(container).addClass("new")
-							}
-							
-							// Boton de la noticia
-							button = $("<div>").addClass("ui-btn-inner ui-li ui-li-static ui-body-c").attr("aria-hidden", true);
-							
-							// Texto de la noticia
-							left = $("<div>").addClass("ui-btn-text");
-							
-							// Flecha indicadora de la derecha
-							arrow = $("<span>").addClass("ui-icon ui-icon-arrow-r ui-icon-shadow");
-							
-							// Enlace
-							link = $("<a>").attr("href", "#ver-noticia").addClass("ui-link-inherit open-new").attr({"data-ajax": "false", "alt": results.rows.item(i).id});
-							
-							// Titulo de la noticia
-							title = $("<h3>").text(results.rows.item(i).title).addClass("ui-li-heading");
-							
-							// Resumen
-							resume = $("<p>").text($(results.rows.item(i).resume).text()).addClass("ui-li-desc");
-							
-							// Construyendo el html correspondiente de la noticia
-							$(link).append(title)
-							$(link).append(resume)
-							$(left).append(link)
-							$(button).append(left);
-							$(button).append(arrow);
-							$(container).append(button);
-							$(news_container).append(container);
+					refresh_url = '#' + $(news_container).parents('div[data-role="page"]').attr("id");
+					count = null;
+					// Si hay mas que 0 y menos que showed_news
+					if (results.rows.length > 0 && results.rows.length < showed_news) {
+						if (navigator.connection.type != Connection.NONE) {
+							console.log("Contando...");
+							var url = app.base_url + "/news/getByKeywords" + mparams;
+							$.when(
+								$.ajax({
+									beforeSend: function() { $.mobile.showPageLoadingMsg(); },
+									complete: function() { $.mobile.hidePageLoadingMsg(); },
+									url: url,
+									dataType: 'jsonp',
+									data: {showed_news: showed_news, page: page, count: true},
+									jsonpCallback: "callback",
+									success: function (data) {
+										count = data.count;
+									}
+								})
+							).done(function (data) {
+								count = data.count;
+								if (count != results.rows.length) {
+									app.getNews(news_container, mparams, refresh_url, page);
+								} else {
+									if (results.rows.length != 0) {
+										app.doWriteNews(results, news_container, showed_news);
+									}
+								}
+							});
+						} else {
+							app.doWriteNews(results, news_container, showed_news);
 						}
 					}
-					// TODO: falta hace un mensaje de cuando no hay noticias
+					if (results.rows.length == 0) {
+						if (navigator.connection.type != Connection.NONE) {
+							console.log("Contando...");
+							var url = app.base_url + "/news/getByKeywords" + mparams;
+							count = null;
+							$.when(
+								$.ajax({
+									beforeSend: function() { $.mobile.showPageLoadingMsg(); },
+									complete: function() { $.mobile.hidePageLoadingMsg(); },
+									url: url,
+									dataType: 'jsonp',
+									data: {showed_news: showed_news, page: page, count: true},
+									jsonpCallback: "callback",
+									success: function (data) {
+										count = data.count;
+									}
+								})
+							).done(function (data) {
+								count = data.count;
+								if (count == 0 && count == results.rows.length) {
+									$(news_container).append("<li><a>No hay noticias que mostrar</a></li>");
+									$(news_container).trigger("create");
+								} else {
+									app.getNews(news_container, mparams, refresh_url, page);
+								}
+							});
+						} else {
+							$(news_container).append("<li><a>No hay noticias que mostrar</a></li>");
+							$(news_container).trigger("create");
+						}
+					}
+					if (results.rows.length == showed_news) {
+						app.doWriteNews(results, news_container, showed_news);
+					}
 				}, function () {console.log("Error loading local news"); });
 			})
 		});
 	},
-	// TODO: comentarios de las funciones, y desactivar el "Anterior" si no hay anteriores
+	
+	doWriteNews: function (results, news_container, showed_news) {
+		console.log("Writing news");
+		for(i=0; i < results.rows.length; i++) {
+			console.log("Loading new: " + results.rows.item(i).id);
+			// Contenedor de noticias
+			container = $("<li>").addClass("ui-btn-icon-right ui-li-has-arrow ui-li ui-li-static ui-body-c ab-new");
+			if (results.rows.item(i).is_new) {
+				$(container).addClass("new")
+			}
+			
+			// Boton de la noticia
+			button = $("<div>").addClass("ui-btn-inner ui-li ui-li-static ui-body-c").attr("aria-hidden", true);
+			
+			// Texto de la noticia
+			left = $("<div>").addClass("ui-btn-text");
+			
+			// Flecha indicadora de la derecha
+			arrow = $("<span>").addClass("ui-icon ui-icon-arrow-r ui-icon-shadow");
+			
+			// Enlace
+			link = $("<a>").attr("href", "#ver-noticia").addClass("ui-link-inherit open-new").attr({"data-ajax": "false", "alt": results.rows.item(i).id});
+			
+			// Titulo de la noticia
+			title = $("<h3>").text(results.rows.item(i).title).addClass("ui-li-heading");
+			
+			// Resumen
+			resume = $("<p>").text($(results.rows.item(i).resume).text()).addClass("ui-li-desc");
+			
+			// Construyendo el html correspondiente de la noticia
+			$(link).append(title)
+			$(link).append(resume)
+			$(left).append(link)
+			$(button).append(left);
+			$(button).append(arrow);
+			$(container).append(button);
+			$(news_container).append(container);
+		}
+	},
+	
 	goNextNews: function (container) {
 		i = parseInt($(container + " #n-page").val()) + 1;
 		$(container + " #n-page").val(i);
@@ -1028,44 +995,31 @@ var app = {
 		$(container).trigger("pageshow")
 	},
 	
+	goPageNews: function (container, select) {
+		$(container + " #n-page").val($(select).val());
+		$(container + "ul.ui-listview").empty().trigger("pageshow")
+		$(container).trigger("pageshow")
+	},
+	
 	goPrevNews: function (container) {
 		i = parseInt($(container + " #n-page").val()) - 1;
-		if (i < 0) {
-			i = 0;
+		if (i < 1) {
+			i = 1;
 		}
 		$(container + " #n-page").val(i);
 		$(container + "ul.ui-listview").empty().trigger("pageshow")
 		$(container).trigger("pageshow")
 	},
 	
-	// Obteniendo las ultimas noticias por keywords
-	//getLatestNewsByKW: function (news_container) {
-	//	$(news_container).empty();
-	//	app.db.transaction(function (ctx) {
-	//		// Variable para contener las palabras claves del usuario
-	//		var kws = new Array();
-	//		
-	//		// Se buscan las palabras calves del usaurio activo
-	//		ctx.executeSql("select s.user_id, k.* from keywords as k join users_keywords as uk on uk.keyword_id = k.id join users as u on u.id = uk.user_id JOIN sessions as s on s.user_id = u.id", [], function (tx, results) {
-	//			for(i=0; i < results.rows.length; i++) {
-	//				// Se ingresan las KW en el arreglo
-	//				kws.push(results.rows.item(i).name);
-	//			}
-	//			
-	//			// Si no hay conectividad se buscan noticias de forma local, de lo contrario, las remotas
-	//			if (navigator.connection.type == Connection.NONE) {
-	//				// Localmente se requiere el arreglo solamente
-	//				app.getLocalNews(news_container, kws);
-	//			} else {
-	//				// Remotamente necesito construir un texto (CakePHP Route Valid)
-	//				app.getNews(news_container, "/" + kws.join('/'));
-	//			}
-	//		})
-	//	});
-	//},
-	
 	// Obtenido las noticias
-	getNews: function (news_container, params, refresh_url) {
+	getNews: function (news_container, params, refresh_url, page) {
+		$(news_container).append("<li><a>Cargando...</a></li>");
+		$(news_container).trigger("create");
+		if (page) {
+			page = parseInt(page);
+		} else {
+			page = 1;
+		}
 		app.db.transaction(function (ctx) {
 			// Obteniendo las configuraciones locales para saber el numero de noticias a mostrar
 			ctx.executeSql("select st.* from settings as st join users as u on u.id = st.user_id JOIN sessions as s on s.user_id = u.id LIMIT 1", [], function (tx, results) {
@@ -1074,9 +1028,6 @@ var app = {
 					showed_news = results.rows.item(0).value;
 				}
 				
-				// Limpiando el contenedor de noticias para que no haya noticias indeseadas
-				$(news_container).empty();
-				
 				// Fuente de noticias
 				var url = app.base_url + "/news/getByKeywords" + params;
 				$.ajax({
@@ -1084,45 +1035,13 @@ var app = {
 					complete: function() { $.mobile.hidePageLoadingMsg(); },
 					url: url,
 					dataType: 'jsonp',
-					data: {showed_news: showed_news},
+					data: {showed_news: showed_news, page: page},
 					timeout: 5000,
 					jsonpCallback: "callback",
 					success: function (data, status) {
+						// Limpiando el contenedor de noticias para que no haya noticias indeseadas
+						$(news_container).empty();
 						$(data).each(function (i, item) {
-							//// Contenedor de la noticia
-							//container = $("<li>").addClass("ui-btn-icon-right ui-li-has-arrow ui-li ui-li-static ui-body-c");
-							//
-							//// Boton de la noticia
-							//button = $("<div>").addClass("ui-btn-inner ui-li ui-li-static ui-body-c").attr("aria-hidden", true);
-							//
-							//// Texto de la noticia
-							//left = $("<div>").addClass("ui-btn-text");
-							//if (!results.rows.item(i).is_new) {
-							//	$(left).addClass("readed")
-							//}
-							//
-							//// Flexa indicadora
-							//arrow = $("<span>").addClass("ui-icon ui-icon-arrow-r ui-icon-shadow");
-							//
-							//// Enlace de la noticia
-							//link = $("<a>").attr("href", "#ver-noticia").addClass("ui-link-inherit open-new").attr({"data-ajax": "false", "alt": item.News.id});
-							//
-							//// Titulo
-							//title = $("<h3>").text(item.News.title).addClass("ui-li-heading");
-							//
-							//// REsumen
-							//resume = $("<p>").text($(item.News.resume).text()).addClass("ui-li-desc");
-							//
-							//// Construyendo el html
-							//$(link).append(title)
-							//$(link).append(resume)
-							//$(left).append(link)
-							//$(button).append(left);
-							//$(button).append(arrow);
-							//$(container).append(button);
-							//$(news_container).append(container);
-							
-							// Guardando las noticias localmente
 							app.db.transaction(function (ctx) {
 								ctx.executeSql("SELECT * FROM news WHERE id = ?", [item.News.id], function (tx, results) {
 									// SI no existe la noticia se guarda, de lo contrario no
@@ -1135,14 +1054,124 @@ var app = {
 								});
 							});
 						})
-						// TODO: falta hace un mensaje de cuando no hay noticias
 					}
-				}).done(function () {
+				}).done(function (data) {
 					if (refresh_url) {
+						console.log("Actualizando el sitio con bandera ");
 						$(refresh_url).trigger("pageshow");
 					}
 				});
 			})
+		});
+	},
+	
+	getNumberPages: function (news_container, params, pages) {
+		app.db.transaction(function (ctx) {
+			// Seleccionando las configuraciones para determinar el numero de noticias a mostrar
+			ctx.executeSql("select st.* from settings as st join users as u on u.id = st.user_id JOIN sessions as s on s.user_id = u.id LIMIT 1", [], function (tx, results) {
+				if (results.rows.length > 0) {
+					// capturando el numero de noticias a mostrar
+					showed_news = results.rows.item(0).value;
+					showed_news = parseInt(showed_news);
+				}
+			});
+		});
+		if (navigator.connection.type == Connection.NONE) {
+			app.db.transaction(function (ctx) {
+				// Texto condicional, se construye de acuerdo al keyword en parametros
+				where = '';
+				
+				// Si hay parametros se construye la clausula where
+				if (params.length) {
+					// Auxiliar para la construccion de un sql bien formado
+					aux = new Array();
+					for (i = 0; i < params.length; i++) {
+						// Condiciones de busqueda
+						aux.push("tags LIKE '%" + params[i] + "%'");
+						aux.push("content LIKE '%" + params[i] + "%'");
+						aux.push("title LIKE '%" + params[i] + "%'");
+						aux.push("resume LIKE '%" + params[i] + "%'");
+						aux.push("category_alias LIKE '%" + params[i] + "%'");
+						aux.push("link LIKE '%" + params[i] + "%'");
+						aux.push("author LIKE '%" + params[i] + "%'");
+					}
+					where = " WHERE " + aux.join(" OR ");
+				}
+				
+				// Seleccionando las configuraciones para determinar el numero de noticias a mostrar
+				ctx.executeSql("select COUNT(id) as count from news " + where, [], function (tx, results) {
+					npages = 1;
+					if (results.rows.length > 0) {
+						// capturando el numero de noticias a mostrar
+						npages = results.rows.item(0).count;
+					}
+					npages = npages / showed_news;
+					npages = parseInt(npages);
+					$(pages).val(npages);
+					app.doGeneratePagination(news_container, npages);
+				});
+			});
+		} else {
+			if (params.length) {
+				params = "/" + params.join("/");
+			}
+			// Fuente de noticias
+			var url = app.base_url + "/news/getByKeywords" + params;
+			$.when(
+				$.ajax({
+					beforeSend: function() { $.mobile.showPageLoadingMsg(); },
+					complete: function() { $.mobile.hidePageLoadingMsg(); },
+					url: url,
+					dataType: 'jsonp',
+					data: {count: true},
+					jsonpCallback: "callback"
+				})
+			).done(function (data) {
+				npages = data.count / showed_news;
+				npages = parseInt(npages);
+				$(pages).val(npages);
+				app.doGeneratePagination(news_container, npages);
+			});
+		}
+	},
+	
+	doGeneratePagination: function (news_container, npages) {
+		container = '#' + $(news_container).parents('div[data-role="page"]').attr("id");
+		
+		block_a = $("<div>").addClass("ui-block-a"); // Prev
+		block_b = $("<div>").addClass("ui-block-b"); // Pages
+		block_c = $("<div>").addClass("ui-block-c"); // Next
+		
+		box_a = $("<div>").addClass("grid-box");
+		box_b = $("<div>").addClass("grid-box");
+		box_c = $("<div>").addClass("grid-box");
+		
+		goprev = $("<a>").attr({"data-role":"button", "onclick": "app.goPrevNews('"+container+"')"}).text("<");
+		gopage = $("<select>").attr({"onchange": "app.goPageNews('"+container+"', this)"});
+		for (i = 1; i <= npages; i++) {
+			$(gopage).append($('<option>', {
+				value: i,
+				text: i,
+				selected: (parseInt($("#n-page").val()) == i) ? true : false
+			}));
+		}
+		gonext = $("<a>").attr({"data-role":"button", "onclick": "app.goNextNews('"+container+"')"}).text(">");
+		
+		$(box_a).append(goprev);
+		$(box_b).append(gopage);
+		$(box_c).append(gonext);
+		
+		$(block_a).append(box_a);
+		$(block_b).append(box_b);
+		$(block_c).append(box_c);
+		
+		$(container + " #pagination").empty();
+		$(container + " #pagination").append(block_a);
+		$(container + " #pagination").append(block_b);
+		$(container + " #pagination").append(block_c);
+		$(container + " #pagination").trigger("create");
+		$(".ui-select").each(function () {
+			$(this).addClass("ui-btn");
 		});
 	},
 	
@@ -1177,16 +1206,6 @@ var app = {
 		
 	},
 	
-	// Intermediario para mostrar la noticia, local o remotamente
-	//showNew: function (params) {
-	//	// Si no hay conexion se busca localmente, de lo contrario, remotamente
-	//	if (navigator.connection.type == Connection.NONE) {
-	//		app.getLocalNew(params);
-	//	} else {
-	//		app.getNew(params)
-	//	}
-	//},
-	
 	// Obteniendo la noticia segun id localmente
 	getLocalNew: function (params) {
 		// Limpiando los contenedores
@@ -1209,27 +1228,6 @@ var app = {
 			}, function () {console.log("Error loading local new"); });
 		});
 	},
-	
-	// Obtenido la noticia segun id
-	//getNew: function (params) {
-	//	// Limpiando los contenedores
-	//	$("#new-title").empty();
-	//	$("#new-content").empty();
-	//	
-	//	// Fuente
-	//	var url = app.base_url + "/news/getById/" + params;
-	//	$.ajax({
-	//		url: url,
-	//		dataType: 'jsonp',
-	//		timeout: 5000,
-	//		jsonpCallback: "callback",
-	//		success: function (item, status) {
-	//			// Estbaleceiendo los valores en los contenedores
-	//			$("#new-title").html(item.News.title)
-	//			$("#new-content").html(item.News.content)
-	//		}
-	//	});
-	//},
 	
 	
 	// En caso de error ejecutando una transaccion u operacion
