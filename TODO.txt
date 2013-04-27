@@ -1,0 +1,120 @@
+TODO
+====
+
+- Hacer el Manual de Usuario
+  
+- Mostrar un indicador en el listado de Principal, que indique que hay noticias nuevas
+
+- Comentar el codigo que falta
+
+- Definir un metodo para determinar los cambios locales y subirlos al servidor cuando los hay, por ejemplo,
+  ponerle a las tablas un campo llamado CHANGED = 1 y con eso, saber qué datos subir, en perfil, settings, kwds
+    // Esto es el save del profile
+    //	$(function() {
+    //		var url = app.base_url + "/users/update";
+    //		$.ajax({
+    //			beforeSend: function() { $.mobile.showPageLoadingMsg(); },
+    //			complete: function() { $.mobile.hidePageLoadingMsg(); },
+    //			url: url,
+    //			data: user,
+    //			dataType: 'jsonp',
+    //			jsonpCallback: "callback",
+    //		}).done(function (data) {
+    //			// mensajes de feedback
+    //			switch (data.code) {
+    //				case 0:
+    //					navigator.notification.alert("Usuario no pudo ser actualizado, intente de nuevo", null, "Error!", "Continuar");
+    //					break;
+    //				case 1:
+    //					navigator.notification.alert("Usuario actualizado con exito", null, "Éxito", "Continuar");
+    //					app.db.transaction(function (tx) {
+    //						tx.executeSql("UPDATE users SET id = ?, email = ?, password = ?, is_new = ?, name = ?, lastname = ?, latitude = ?, longitude = ?, location = ?, website = ? WHERE id = ?", [data.item.User.id, data.item.User.email, data.item.User.password, data.item.User.is_new, data.item.User.name, data.item.User.lastname, data.item.User.latitude, data.item.User.longitude, data.item.User.location, data.item.User.website, data.item.User.id], function() {console.log("actualizando usuario")}, function () {console.log("error actualizando usuario")});
+    //					})
+    //					$.mobile.changePage("index.html#principal");
+    //					break;
+    //				case 2:
+    //					navigator.notification.alert("Ocurrio algun problema, intente nuevamente", null, "Alerta", "Continuar");
+    //					break;
+    //			}
+    //		}).error (function () {
+    //			// En caso de error
+    //			navigator.notification.alert("Ocurrio algun problema inesperado, intente nuevamente", null, "Alerta", "Continuar");
+    //		});
+    //	})
+    
+    // Esto es el settings
+    //	$(function() {
+    //		var url = app.base_url + "/settings/save";
+    //		$.ajax({
+    //			beforeSend: function() { $.mobile.showPageLoadingMsg(); },
+    //			complete: function() { $.mobile.hidePageLoadingMsg(); },
+    //			url: url,
+    //			data: setting,
+    //			dataType: 'jsonp',
+    //			jsonpCallback: "callback",
+    //		}).done(function (data) {
+    //			// Mensajes de feedback
+    //			switch (data.code) {
+    //				case 0:
+    //					navigator.notification.alert("La configuración no pudo ser guardada, intente de nuevo", null, "Error!", "Continuar");
+    //					break;
+    //				case 1:
+    //					navigator.notification.alert("Configuración actualizada con exito", null, "Éxito", "Continuar");
+    //					app.db.transaction(function (tx) {
+    //						// Si ingresan, o actualizan las configuraciones
+    //						tx.executeSql("SELECT st.* FROM settings as st join users as u on u.id = st.user_id", [], function (ctx, results) {
+    //							if (results.rows.length > 0) {
+    //								tx.executeSql("UPDATE settings SET value = ? WHERE id = ?", [data.item.Setting.value, data.item.Setting.id], function() {console.log("actualizando configuraciones")}, function () {console.log("error actualizando configuraciones")});
+    //							} else {
+    //								tx.executeSql("INSERT INTO settings (id, name, value,user_id) values (?, showed_news, ?, ?)", [data.item.Setting.id, data.item.Setting.value, data.item.Setting.user_id], function() {console.log("guardando configuraciones")}, function () {console.log("error guardando configuraciones")});
+    //							}
+    //						});
+    //					})
+    //					$.mobile.changePage("index.html#principal");
+    //					break;
+    //				case 2:
+    //					navigator.notification.alert("Ocurrio algun problema, intente nuevamente", null, "Alerta", "Continuar");
+    //					break;
+    //			}
+    //		}).error (function () {
+    //			// En caso de error
+    //			navigator.notification.alert("Ocurrio algun problema inesperado, intente nuevamente", null, "Alerta", "Continuar");
+    //		});
+    //	})
+    //}
+
+- Hacer syncronizacion cuando hay conexion
+
+- Comprobar que todos los enlaces estan funcionando bien
+
+- Acomodar el splash screeen, tal vez dejar solo en blanco si no se puede poner bien
+
+- Permitir agregar KW localmente, y personalizadas
+
+- Determinar cuantas noticias maximo se almacenan en el telefono, e ir borrando las viejas
+  en la medida que hayan nuevas. Tal vez el numero a guardar, sea el numero que define el usuario
+  que quiere mostrar (TAL VEZ), puede ser mas
+
+- Definir cuantas seran las Noticias a almacenar o el tiempo que peuden estar guardadas, tal vez con
+  el sync se pueden borrar las que estan fuera de la condicion
+
+- En las configuraciones, establecer el parametro que pregunte al usuario si quiere que obtengamos datos
+  solo cuando este bajo una WIFI o siempre, y cambiar todo donde se valida el tipo de conexion
+  
+- Verificar el login, que se mueve innecesariamente, el campo de password se va fuera, ahi pasa algo raro
+
+- Popup de politicas de privacidad al registrarse y agregar su campo en el users
+
+- Revisar la documentacion de las funciones
+
+- Implementar los cambios de estilo
+
+- Acomodar el footer para que tengas las opciones correctas
+
+- Configurar, Show/HIde Sliders
+
+- HTML Templates para los mail
+
+- Acomodar los sliders, cuando no se ha logeado, el principal se ve mal, pero si esta logeado se ve bien
+
+- Notificaciones Push de noticias nuevas

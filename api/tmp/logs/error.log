@@ -1,0 +1,53 @@
+2013-03-20 13:20:38 Error: Fatal Error (1): Call to a member function find() on a non-object in [/home/krito162/vainas/Sistemas/news/curl/api/Controller/NewsController.php, line 16]
+2013-03-20 13:20:38 Error: [FatalErrorException] Call to a member function find() on a non-object
+#0 /home/krito162/Descargas/cakephp/lib/Cake/Error/ErrorHandler.php(161): ErrorHandler::handleFatalError(1, 'Call to a membe...', '/home/krito162/...', 16)
+#1 [internal function]: ErrorHandler::handleError(1, 'Call to a membe...', '/home/krito162/...', 16, Array)
+#2 /home/krito162/Descargas/cakephp/lib/Cake/Core/App.php(926): call_user_func('ErrorHandler::h...', 1, 'Call to a membe...', '/home/krito162/...', 16, Array)
+#3 /home/krito162/Descargas/cakephp/lib/Cake/Core/App.php(899): App::_checkFatalError()
+#4 [internal function]: App::shutdown()
+#5 {main}
+2013-03-20 13:37:32 Error: [MissingActionException] Action NewsController::view.json() could not be found.
+#0 /home/krito162/Descargas/cakephp/lib/Cake/Routing/Dispatcher.php(186): Controller->invokeAction(Object(CakeRequest))
+#1 /home/krito162/Descargas/cakephp/lib/Cake/Routing/Dispatcher.php(161): Dispatcher->_invoke(Object(NewsController), Object(CakeRequest), Object(CakeResponse))
+#2 /home/krito162/vainas/Sistemas/news/curl/api/webroot/index.php(97): Dispatcher->dispatch(Object(CakeRequest), Object(CakeResponse))
+#3 {main}
+2013-03-20 13:37:42 Error: [MissingActionException] Action NewsController::view.() could not be found.
+#0 /home/krito162/Descargas/cakephp/lib/Cake/Routing/Dispatcher.php(186): Controller->invokeAction(Object(CakeRequest))
+#1 /home/krito162/Descargas/cakephp/lib/Cake/Routing/Dispatcher.php(161): Dispatcher->_invoke(Object(NewsController), Object(CakeRequest), Object(CakeResponse))
+#2 /home/krito162/vainas/Sistemas/news/curl/api/webroot/index.php(97): Dispatcher->dispatch(Object(CakeRequest), Object(CakeResponse))
+#3 {main}
+2013-03-20 13:49:40 Error: [MissingControllerException] Controller class Controller could not be found.
+#0 /home/krito162/vainas/Sistemas/news/curl/api/webroot/index.php(97): Dispatcher->dispatch(Object(CakeRequest), Object(CakeResponse))
+#1 {main}
+2013-03-20 13:49:56 Error: [MissingControllerException] Controller class Controller could not be found.
+#0 /home/krito162/vainas/Sistemas/news/curl/api/webroot/index.php(97): Dispatcher->dispatch(Object(CakeRequest), Object(CakeResponse))
+#1 {main}
+2013-03-20 13:50:04 Error: [MissingControllerException] Controller class Controller could not be found.
+#0 /home/krito162/vainas/Sistemas/news/curl/api/webroot/index.php(97): Dispatcher->dispatch(Object(CakeRequest), Object(CakeResponse))
+#1 {main}
+2013-03-20 13:58:37 Error: [MissingControllerException] Controller class GetNewsByController could not be found.
+#0 /home/krito162/vainas/Sistemas/news/curl/api/webroot/index.php(97): Dispatcher->dispatch(Object(CakeRequest), Object(CakeResponse))
+#1 {main}
+2013-03-20 13:58:58 Error: [MissingActionException] Action NewsController::getBykeywords() could not be found.
+#0 /home/krito162/Descargas/cakephp/lib/Cake/Routing/Dispatcher.php(186): Controller->invokeAction(Object(CakeRequest))
+#1 /home/krito162/Descargas/cakephp/lib/Cake/Routing/Dispatcher.php(161): Dispatcher->_invoke(Object(NewsController), Object(CakeRequest), Object(CakeResponse))
+#2 /home/krito162/vainas/Sistemas/news/curl/api/webroot/index.php(97): Dispatcher->dispatch(Object(CakeRequest), Object(CakeResponse))
+#3 {main}
+2013-03-20 14:03:22 Error: [MissingActionException] Action NewsController::getByKeywords() could not be found.
+#0 /home/krito162/Descargas/cakephp/lib/Cake/Routing/Dispatcher.php(186): Controller->invokeAction(Object(CakeRequest))
+#1 /home/krito162/Descargas/cakephp/lib/Cake/Routing/Dispatcher.php(161): Dispatcher->_invoke(Object(NewsController), Object(CakeRequest), Object(CakeResponse))
+#2 /home/krito162/vainas/Sistemas/news/curl/api/webroot/index.php(97): Dispatcher->dispatch(Object(CakeRequest), Object(CakeResponse))
+#3 {main}
+2013-03-20 14:34:11 Error: [PDOException] SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'ILIKE 'castilla') OR (`News`.`content` ILIKE 'castilla') OR (`News`.`title` ILIK' at line 1
+#0 /home/krito162/Descargas/cakephp/lib/Cake/Model/Datasource/DboSource.php(459): PDOStatement->execute(Array)
+#1 /home/krito162/Descargas/cakephp/lib/Cake/Model/Datasource/DboSource.php(425): DboSource->_execute('SELECT `News`.`...', Array)
+#2 /home/krito162/Descargas/cakephp/lib/Cake/Model/Datasource/DboSource.php(669): DboSource->execute('SELECT `News`.`...', Array, Array)
+#3 /home/krito162/Descargas/cakephp/lib/Cake/Model/Datasource/DboSource.php(1080): DboSource->fetchAll('SELECT `News`.`...', false)
+#4 /home/krito162/Descargas/cakephp/lib/Cake/Model/Model.php(2642): DboSource->read(Object(News), Array)
+#5 /home/krito162/vainas/Sistemas/news/curl/api/Controller/NewsController.php(37): Model->find('all', Array)
+#6 [internal function]: NewsController->getByKeywords('castilla')
+#7 /home/krito162/Descargas/cakephp/lib/Cake/Controller/Controller.php(485): ReflectionMethod->invokeArgs(Object(NewsController), Array)
+#8 /home/krito162/Descargas/cakephp/lib/Cake/Routing/Dispatcher.php(186): Controller->invokeAction(Object(CakeRequest))
+#9 /home/krito162/Descargas/cakephp/lib/Cake/Routing/Dispatcher.php(161): Dispatcher->_invoke(Object(NewsController), Object(CakeRequest), Object(CakeResponse))
+#10 /home/krito162/vainas/Sistemas/news/curl/api/webroot/index.php(97): Dispatcher->dispatch(Object(CakeRequest), Object(CakeResponse))
+#11 {main}
